@@ -1,2 +1,20 @@
 # courier_company_test
-technical interview test
+
+## To Run
+
+### Docker
+
+### About
+
+Login
+
+```
+User:   Admin
+Pass:   Admin@123
+```
+
+sequelize
+
+```
+sequelize model:create --name Auth --attributes username:string, password:string
+```
