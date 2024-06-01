@@ -3,12 +3,12 @@ const router = express.Router();
 
 const user = require("../controllers/user");
 const vehicleType = require("../controllers/vehicle-type");
-const maintenance = require("../controllers/maintenance");
+const maintenanceType = require("../controllers/maintenance-type");
 const vehicle = require("../controllers/vehicle");
 const vehicleMaintenance = require("../controllers/vehicle-maintenance");
 
 // User
-router.get("/user", user.get);
+router.get("/user/:auth_id", user.get);
 router.post("/user", user.create);
 router.put("/user", user.update);
 
@@ -19,10 +19,10 @@ router.put("/vehicle-type/:id", vehicleType.update);
 router.delete("/vehicle-type/:id", vehicleType.delete);
 
 // Maintenance
-router.get("/maintenance", maintenance.get);
-router.post("/maintenance", maintenance.create);
-router.put("/maintenance/:id", maintenance.update);
-router.delete("/maintenance/:id", maintenance.delete);
+router.get("/maintenance-type", maintenanceType.get);
+router.post("/maintenance-type", maintenanceType.create);
+router.put("/maintenance-type/:id", maintenanceType.update);
+router.delete("/maintenance-type/:id", maintenanceType.delete);
 
 // Vehicle
 router.get("/vehicle", vehicle.get);

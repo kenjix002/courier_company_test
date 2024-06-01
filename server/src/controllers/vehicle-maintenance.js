@@ -1,4 +1,4 @@
-class VehicleMaintenance {
+class VehicleMaintenanceController {
   get(req, res) {
     res.send("HELLO from VehicleMaintenance");
   }
@@ -16,4 +16,4 @@ class VehicleMaintenance {
   }
 }
 
-module.exports = new VehicleMaintenance();
+module.exports = new VehicleMaintenanceController();

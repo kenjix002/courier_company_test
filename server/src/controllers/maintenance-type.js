@@ -1,6 +1,6 @@
-const { Sequelize, sequelize, Vehicle_Type } = require("../models");
+const { Sequelize, sequelize, Maintenance_Type } = require("../models");
 
-class VehicleTypeController {
+class MaintenanceTypeController {
   create = async (req, res) => {
     const transaction = await sequelize.transaction();
 
@@ -12,11 +12,9 @@ class VehicleTypeController {
       }
 
       // check duplicate
-      const exists = await Vehicle_Type.findOne(
+      const exists = await Maintenance_Type.findOne(
         {
           where: {
-            brand: req.body.brand,
-            model: req.body.model,
             type: req.body.type,
           },
         },
@@ -25,37 +23,35 @@ class VehicleTypeController {
       if (exists) {
         await transaction.commit();
 
-        return res.status(400).send("Error: Vehicle Type existed.");
+        return res.status(400).send("Error: Maintenance Type existed.");
       }
 
       // Create
-      await Vehicle_Type.create(
+      await Maintenance_Type.create(
         {
-          brand: req.body.brand,
-          model: req.body.model,
           type: req.body.type,
-          availability: true,
+          priority: req.body.priority,
+          periodic_maintenance_month: req.body.periodic_maintenance_month,
         },
         { transaction },
       );
-
       await transaction.commit();
 
-      return res.status(201).send("Vehicle Type created.");
+      return res.status(201).send("Maintenance Type created.");
     } catch (error) {
       await transaction.rollback();
 
-      return res.status(500).send("Error: Failed to create Vehicle Type.");
+      return res.status(500).send("Error: Failed to create Maintenance Type.");
     }
   };
 
   get = async (req, res) => {
     try {
-      const vehicleTypes = await Vehicle_Type.findAll({});
+      const maintenanceType = await Maintenance_Type.findAll({});
 
-      return res.status(200).send(vehicleTypes);
+      return res.status(200).send(maintenanceType);
     } catch (error) {
-      return res.status(500).send("Failed to retrieve vehicle types.");
+      return res.status(500).send("Failed to retrieve maintenance types.");
     }
   };
 
@@ -70,11 +66,9 @@ class VehicleTypeController {
       }
 
       // Check duplicate
-      const exists = await Vehicle_Type.findOne(
+      const exists = await Maintenance_Type.findOne(
         {
           where: {
-            brand: req.body.brand,
-            model: req.body.model,
             type: req.body.type,
             id: { [Sequelize.Op.ne]: req.params.id },
           },
@@ -84,16 +78,15 @@ class VehicleTypeController {
       if (exists) {
         await transaction.commit();
 
-        return res.status(400).send("Error: Vehicle Type existed.");
+        return res.status(400).send("Error: Maintenance Type existed.");
       }
 
       // Update
-      const [updatedCount] = await Vehicle_Type.update(
+      const [updatedCount] = await Maintenance_Type.update(
         {
-          brand: req.body.brand,
-          model: req.body.model,
           type: req.body.type,
-          availability: req.body.availability,
+          priority: req.body.priority,
+          periodic_maintenance_month: req.body.periodic_maintenance_month,
         },
         { where: { id: req.params.id } },
         { transaction },
@@ -101,13 +94,13 @@ class VehicleTypeController {
       await transaction.commit();
 
       if (updatedCount) {
-        return res.status(200).send("Vehicle Types successfully edited.");
+        return res.status(200).send("Maintenance Types successfully edited.");
       }
 
-      return res.status(400).send("Error: Failed to update vehicle types.");
+      return res.status(400).send("Error: Failed to update maintenance types.");
     } catch (error) {
       await transaction.rollback();
-      return res.status(500).send("Error: Failed to update vehicle types.");
+      return res.status(500).send("Error: Failed to update maintenance types.");
     }
   };
 
@@ -115,7 +108,7 @@ class VehicleTypeController {
     const transaction = await sequelize.transaction();
 
     try {
-      await Vehicle_Type.destroy(
+      await Maintenance_Type.destroy(
         {
           where: {
             id: req.params.id,
@@ -126,14 +119,16 @@ class VehicleTypeController {
         await transaction.commit();
 
         if (deletedCount) {
-          return res.status(204).send("Vehicle Types successfully deleted.");
+          return res
+            .status(204)
+            .send("Maintenance Types successfully deleted.");
         }
 
-        return res.status(404).send("No vehicles type found.");
+        return res.status(404).send("No maintenance type found.");
       });
     } catch (error) {
       await transaction.rollback();
-      return res.status(500).send("Error: Failed to delete vehicle types.");
+      return res.status(500).send("Error: Failed to delete maintenance types.");
     }
   };
 
@@ -143,18 +138,19 @@ class VehicleTypeController {
       status: true,
     };
 
-    if (req.brand.trim() === "") {
-      result.message = "brand cannot be empty";
-      result.status = false;
-    }
-
-    if (req.model.trim() === "") {
-      result.message = "brand cannot be empty";
-      result.status = false;
-    }
-
     if (req.type.trim() === "") {
-      result.message = "brand cannot be empty";
+      result.message = "type cannot be empty";
+      result.status = false;
+    }
+
+    if (req.priority.trim() === "") {
+      result.message = "priority cannot be empty";
+      result.status = false;
+    }
+
+    if (req.periodic_maintenance_month < 1) {
+      result.message =
+        "periodic maintenance month cannot be lesser than 1 month";
       result.status = false;
     }
 
@@ -162,4 +158,4 @@ class VehicleTypeController {
   }
 }
 
-module.exports = new VehicleTypeController();
+module.exports = new MaintenanceTypeController();

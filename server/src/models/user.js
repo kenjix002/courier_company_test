@@ -1,6 +1,5 @@
 "use strict";
 const { Model } = require("sequelize");
-const { FOREIGNKEYS } = require("sequelize/lib/query-types");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
