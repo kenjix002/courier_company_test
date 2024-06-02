@@ -14,6 +14,14 @@ module.exports = {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
+        {
+          id: 2,
+          username: "Driver",
+          password:
+            "$2b$10$.N613z7XUrjRZonDVTJYTOH2C2TyTRGPgOamt4Pj8VCLwOVNGpljG",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
       ],
       {},
     );

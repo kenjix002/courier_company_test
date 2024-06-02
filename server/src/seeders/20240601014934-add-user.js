@@ -16,6 +16,16 @@ module.exports = {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
+        {
+          id: 2,
+          name: "Driver",
+          email: "driver@example.com",
+          role: "DRIVER",
+          client: "Apple",
+          auth_id: 2,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
       ],
       {},
     );

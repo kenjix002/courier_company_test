@@ -3,12 +3,17 @@ const { Sequelize, sequelize, Maintenance_Type } = require("../models");
 class MaintenanceTypeController {
   create = async (req, res) => {
     const transaction = await sequelize.transaction();
+    const authinfo = req.decoded;
 
     try {
+      if (authinfo.role !== "ADMIN") {
+        return res.status(403).json({ message: "forbidden action." });
+      }
+
       // validate
       const validate = this.validate(req.body);
       if (!validate.status) {
-        return res.status(400).send(`Error validation: ${validate.message}`);
+        return res.status(400).json({ message: validate.message });
       }
 
       // check duplicate
@@ -23,7 +28,7 @@ class MaintenanceTypeController {
       if (exists) {
         await transaction.commit();
 
-        return res.status(400).send("Error: Maintenance Type existed.");
+        return res.status(400).json({ message: "maintenance type existed." });
       }
 
       // Create
@@ -37,32 +42,42 @@ class MaintenanceTypeController {
       );
       await transaction.commit();
 
-      return res.status(201).send("Maintenance Type created.");
+      return res.status(201).json({ message: "maintenance type successfully created." });
     } catch (error) {
       await transaction.rollback();
 
-      return res.status(500).send("Error: Failed to create Maintenance Type.");
+      return res.status(500).json({ message: "failed to create maintenance type." });
     }
   };
 
   get = async (req, res) => {
+    const authinfo = req.decoded;
     try {
+      if (authinfo.role !== "ADMIN") {
+        return res.status(403).json({ message: "forbidden action." });
+      }
+
       const maintenanceType = await Maintenance_Type.findAll({});
 
-      return res.status(200).send(maintenanceType);
+      return res.status(200).json({ data: maintenanceType });
     } catch (error) {
-      return res.status(500).send("Failed to retrieve maintenance types.");
+      return res.status(500).json({ message: "failed to retrieve maintenance types." });
     }
   };
 
   update = async (req, res) => {
     const transaction = await sequelize.transaction();
+    const authinfo = req.decoded;
 
     try {
+      if (authinfo.role !== "ADMIN") {
+        return res.status(403).json({ message: "forbidden action." });
+      }
+
       // Validate
       const validate = this.validate(req.body);
       if (!validate.status) {
-        return res.status(400).send(`Error validation: ${validate.message}`);
+        return res.status(400).json({ message: validate.message });
       }
 
       // Check duplicate
@@ -78,7 +93,7 @@ class MaintenanceTypeController {
       if (exists) {
         await transaction.commit();
 
-        return res.status(400).send("Error: Maintenance Type existed.");
+        return res.status(400).json({ message: "maintenance type existed." });
       }
 
       // Update
@@ -94,20 +109,25 @@ class MaintenanceTypeController {
       await transaction.commit();
 
       if (updatedCount) {
-        return res.status(200).send("Maintenance Types successfully edited.");
+        return res.status(200).json({ message: "maintenance type successfully updated." });
       }
 
-      return res.status(400).send("Error: Failed to update maintenance types.");
+      return res.status(400).json({ message: "failed to update maintenance type." });
     } catch (error) {
       await transaction.rollback();
-      return res.status(500).send("Error: Failed to update maintenance types.");
+      return res.status(500).json({ message: "failed to update maintenance type." });
     }
   };
 
   delete = async (req, res) => {
     const transaction = await sequelize.transaction();
+    const authinfo = req.decoded;
 
     try {
+      if (authinfo.role !== "ADMIN") {
+        return res.status(403).json({ message: "forbidden action." });
+      }
+
       await Maintenance_Type.destroy(
         {
           where: {
@@ -119,16 +139,14 @@ class MaintenanceTypeController {
         await transaction.commit();
 
         if (deletedCount) {
-          return res
-            .status(204)
-            .send("Maintenance Types successfully deleted.");
+          return res.status(204).json({ message: "maintenance type successfully deleted." });
         }
 
-        return res.status(404).send("No maintenance type found.");
+        return res.status(404).json({ message: "no maintenance type found" });
       });
     } catch (error) {
       await transaction.rollback();
-      return res.status(500).send("Error: Failed to delete maintenance types.");
+      return res.status(500).json({ message: "failed to delete maintenance type" });
     }
   };
 
@@ -149,8 +167,7 @@ class MaintenanceTypeController {
     }
 
     if (req.periodic_maintenance_month < 1) {
-      result.message =
-        "periodic maintenance month cannot be lesser than 1 month";
+      result.message = "periodic maintenance month cannot be lesser than 1 month";
       result.status = false;
     }
 

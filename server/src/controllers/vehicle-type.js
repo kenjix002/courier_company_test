@@ -3,12 +3,17 @@ const { Sequelize, sequelize, Vehicle_Type } = require("../models");
 class VehicleTypeController {
   create = async (req, res) => {
     const transaction = await sequelize.transaction();
+    const authinfo = req.decoded;
 
     try {
+      if (authinfo.role !== "ADMIN") {
+        return res.status(403).json({ message: "forbidden action." });
+      }
+
       // validate
       const validate = this.validate(req.body);
       if (!validate.status) {
-        return res.status(400).send(`Error validation: ${validate.message}`);
+        return res.status(400).json({ message: validate.message });
       }
 
       // check duplicate
@@ -25,7 +30,7 @@ class VehicleTypeController {
       if (exists) {
         await transaction.commit();
 
-        return res.status(400).send("Error: Vehicle Type existed.");
+        return res.status(400).json({ message: "vehicle type existed." });
       }
 
       // Create
@@ -41,32 +46,43 @@ class VehicleTypeController {
 
       await transaction.commit();
 
-      return res.status(201).send("Vehicle Type created.");
+      return res.status(201).json({ message: "vehicle type successfully created." });
     } catch (error) {
       await transaction.rollback();
 
-      return res.status(500).send("Error: Failed to create Vehicle Type.");
+      return res.status(500).json({ message: "failed to create vehicle type." });
     }
   };
 
   get = async (req, res) => {
+    const authinfo = req.decoded;
+
     try {
+      if (authinfo.role !== "ADMIN") {
+        return res.status(403).json({ message: "forbidden action." });
+      }
+
       const vehicleTypes = await Vehicle_Type.findAll({});
 
-      return res.status(200).send(vehicleTypes);
+      return res.status(200).json({ data: vehicleTypes });
     } catch (error) {
-      return res.status(500).send("Failed to retrieve vehicle types.");
+      return res.status(500).json({ message: "failed to retrive vehicle types." });
     }
   };
 
   update = async (req, res) => {
     const transaction = await sequelize.transaction();
+    const authinfo = req.decoded;
 
     try {
+      if (authinfo.role !== "ADMIN") {
+        return res.status(403).json({ message: "forbidden action." });
+      }
+
       // Validate
       const validate = this.validate(req.body);
       if (!validate.status) {
-        return res.status(400).send(`Error validation: ${validate.message}`);
+        return res.status(400).json({ message: validate.message });
       }
 
       // Check duplicate
@@ -84,7 +100,7 @@ class VehicleTypeController {
       if (exists) {
         await transaction.commit();
 
-        return res.status(400).send("Error: Vehicle Type existed.");
+        return res.status(400).json({ message: "vehicle type existed." });
       }
 
       // Update
@@ -101,20 +117,25 @@ class VehicleTypeController {
       await transaction.commit();
 
       if (updatedCount) {
-        return res.status(200).send("Vehicle Types successfully edited.");
+        return res.status(200).json({ message: "vehicle type successfully created." });
       }
 
-      return res.status(400).send("Error: Failed to update vehicle types.");
+      return res.status(400).json({ message: "failed to update vehicle type." });
     } catch (error) {
       await transaction.rollback();
-      return res.status(500).send("Error: Failed to update vehicle types.");
+      return res.status(500).json({ message: "failed to update vehicle type." });
     }
   };
 
   delete = async (req, res) => {
     const transaction = await sequelize.transaction();
+    const authinfo = req.decoded;
 
     try {
+      if (authinfo.role !== "ADMIN") {
+        return res.status(403).json({ message: "forbidden action." });
+      }
+
       await Vehicle_Type.destroy(
         {
           where: {
@@ -126,14 +147,14 @@ class VehicleTypeController {
         await transaction.commit();
 
         if (deletedCount) {
-          return res.status(204).send("Vehicle Types successfully deleted.");
+          return res.status(204).json();
         }
 
-        return res.status(404).send("No vehicles type found.");
+        return res.status(404).json({ message: "no vehicle type found." });
       });
     } catch (error) {
       await transaction.rollback();
-      return res.status(500).send("Error: Failed to delete vehicle types.");
+      return res.status(500).json({ message: "failed to delete vehicle type." });
     }
   };
 

@@ -1,15 +1,22 @@
 const { Sequelize, sequelize, User, Auth } = require("../models");
 const bcrypt = require("bcrypt");
+const basicAuth = require("basic-auth");
+const jwt = require("jsonwebtoken");
 
 class UserController {
   create = async (req, res) => {
     const transaction = await sequelize.transaction();
+    const authinfo = req.decoded;
 
     try {
+      if (authinfo.role !== "ADMIN") {
+        return res.status(403).json({ message: "forbidden action." });
+      }
+
       // validation
       const validate = this.validateCreate(req.body);
       if (!validate.status) {
-        return res.status(400).send(`Error validation: ${validate.message}`);
+        return res.status(400).json({ message: validate.message });
       }
 
       // Check duplicate
@@ -18,15 +25,12 @@ class UserController {
       });
       const existUser = await User.findOne({
         where: {
-          [Sequelize.Op.or]: [
-            { email: req.body.email },
-            { name: req.body.name },
-          ],
+          [Sequelize.Op.or]: [{ email: req.body.email }, { name: req.body.name }],
         },
       });
 
       if (existAuth || existUser) {
-        return res.status(400).send("Error: User already existed.");
+        return res.status(400).json({ message: "user already existed." });
       }
 
       // Hash password
@@ -34,10 +38,7 @@ class UserController {
       const hashed = await bcrypt.hash(req.body.password, salt);
 
       // Create Auth
-      const auth = await Auth.create(
-        { username: req.body.username, password: hashed },
-        { transaction },
-      );
+      const auth = await Auth.create({ username: req.body.username, password: hashed }, { transaction });
 
       // Create User
       await User.create(
@@ -52,21 +53,22 @@ class UserController {
       );
 
       await await transaction.commit();
-      return res.status(201).send("User created.");
+      return res.status(201).json({ message: "user successfully created." });
     } catch (error) {
       await transaction.rollback();
-      return res.status(400).send("Error: Failed to create user.");
+      return res.status(400).json({ message: "failed to create user." });
     }
   };
 
   get = async (req, res) => {
     const transaction = await sequelize.transaction();
+    const authinfo = req.decoded;
 
     try {
       const user = await User.findOne(
         {
           where: {
-            auth_id: req.params.auth_id,
+            id: authinfo.user_id,
           },
         },
         { transaction },
@@ -74,15 +76,11 @@ class UserController {
 
       await transaction.commit();
 
-      return res.status(200).send(user);
+      return res.status(200).json({ data: user });
     } catch (error) {
-      return res.status(500).send(`Error: Failed to retrieve user.`);
+      return res.status(500).json({ message: "failed to retrieve user." });
     }
   };
-
-  update(req, res) {
-    res.send("unimplemented method");
-  }
 
   validateCreate(req) {
     let result = {
@@ -122,6 +120,34 @@ class UserController {
 
     return result;
   }
+
+  login = async (req, res) => {
+    const credential = basicAuth(req);
+
+    const authUser = await Auth.findOne({
+      where: { username: credential.name },
+    });
+
+    const isPassword = await bcrypt.compare(credential.pass, authUser.password);
+
+    if (isPassword) {
+      // Get user
+      const user = await User.findOne({ where: { auth_id: authUser.id } });
+
+      // Generate jwt
+      const info = {
+        user_id: user.id,
+        role: user.role,
+      };
+      const jwtToken = jwt.sign(info, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+
+      return res.status(200).json({ token: jwtToken });
+    }
+
+    return res.status(401).send("Wrong username/password.");
+  };
 }
 
 module.exports = new UserController();
