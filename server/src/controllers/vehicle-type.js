@@ -46,10 +46,11 @@ class VehicleTypeController {
 
       await transaction.commit();
 
+      req.logger.info(`created new vehicle type by ${authinfo.name}`);
       return res.status(201).json({ message: "vehicle type successfully created." });
     } catch (error) {
       await transaction.rollback();
-
+      req.logger.error(`failed to Created new vehicle type by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to create vehicle type." });
     }
   };
@@ -64,8 +65,10 @@ class VehicleTypeController {
 
       const vehicleTypes = await Vehicle_Type.findAll({});
 
+      req.logger.info(`vehicle types retrieved by ${authinfo.name}`);
       return res.status(200).json({ data: vehicleTypes });
     } catch (error) {
+      req.logger.error(`failed to retrieve vehicle types by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to retrive vehicle types." });
     }
   };
@@ -117,12 +120,15 @@ class VehicleTypeController {
       await transaction.commit();
 
       if (updatedCount) {
-        return res.status(200).json({ message: "vehicle type successfully created." });
+        req.logger.info(`vehicle types updated by ${authinfo.name}`);
+        return res.status(200).json({ message: "vehicle type successfully updated." });
       }
 
+      req.logger.error(`failed to update vehicle types by ${authinfo.name}`);
       return res.status(400).json({ message: "failed to update vehicle type." });
     } catch (error) {
       await transaction.rollback();
+      req.logger.error(`failed to update vehicle types by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to update vehicle type." });
     }
   };
@@ -147,13 +153,16 @@ class VehicleTypeController {
         await transaction.commit();
 
         if (deletedCount) {
+          req.logger.info(`vehicle types deleted by ${authinfo.name}`);
           return res.status(204).json();
         }
 
+        req.logger.warn(`fail to delete vehicle types by ${authinfo.name}`);
         return res.status(404).json({ message: "no vehicle type found." });
       });
     } catch (error) {
       await transaction.rollback();
+      req.logger.error(`fail to delete vehicle types by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to delete vehicle type." });
     }
   };

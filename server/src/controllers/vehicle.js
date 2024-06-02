@@ -43,10 +43,12 @@ class VehicleController {
 
       await transaction.commit();
 
+      req.logger.info(`created new vehicle by ${authinfo.name}`);
       return res.status(201).json({ message: "vehicle successfully created." });
     } catch (error) {
       await transaction.rollback();
 
+      req.logger.error(`fail to create new vehicle by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to create vehicle." });
     }
   };
@@ -65,9 +67,10 @@ class VehicleController {
         vehicleInfo.push({ user, vehicleType });
       }
 
+      req.logger.info(`vehicles info retrieved by ${authinfo.name}`);
       return res.status(200).json({ data: vehicleInfo });
     } catch (error) {
-      console.log(error);
+      req.logger.error(`fail to retrieve vehicles info by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to retrieve vehicles." });
     }
   };
@@ -116,12 +119,15 @@ class VehicleController {
       await transaction.commit();
 
       if (updatedCount) {
+        req.logger.info(`vehicle info updated by ${authinfo.name}`);
         return res.status(200).json({ message: "vehicle successfully edited." });
       }
 
+      req.logger.error(`fail to update vehicle info by ${authinfo.name}`);
       return res.status(400).json({ message: "Failed to update vehicle." });
     } catch (error) {
       await transaction.rollback();
+      req.logger.error(`fail to update vehicle info by ${authinfo.name}`);
       return res.status(500).json({ message: "Failed to update vehicle." });
     }
   };
@@ -146,13 +152,16 @@ class VehicleController {
         await transaction.commit();
 
         if (deletedCount) {
+          req.logger.info(`vehicle info deleted by ${authinfo.name}`);
           return res.status(204).json({ message: "vehicle successfully deleted." });
         }
 
+        req.logger.warn(`fail to delete vehicle info by ${authinfo.name}`);
         return res.status(404).json({ message: "no vehicle found." });
       });
     } catch (error) {
       await transaction.rollback();
+      req.logger.error(`fail to delete vehicle info by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to delete vehicle." });
     }
   };

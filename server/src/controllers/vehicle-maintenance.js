@@ -47,9 +47,11 @@ class VehicleMaintenanceController {
       );
       await transaction.commit();
 
+      req.logger.info(`vehicle maintenance detail created by ${authinfo.name}`);
       return res.status(201).json({ message: "vehicle maintenance detail successfully created." });
     } catch (error) {
       await transaction.rollback();
+      req.logger.error(`fail to create vehicle maintenance detail by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to create vehicle maintenance detail." });
     }
   };
@@ -58,8 +60,10 @@ class VehicleMaintenanceController {
     try {
       const vehicleMaintenance = await Vehicle_Maintenance.findAll({ where: { vehicle_id: req.params.vehicle_id } });
 
+      req.logger.info(`vehicle maintenance details retrieved by ${authinfo.name}`);
       return res.status(200).json({ data: vehicleMaintenance });
     } catch (error) {
+      req.logger.error(`fail to retrieve vehicle maintenance details by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to retrieve vehicle maintenance details." });
     }
   };
@@ -113,12 +117,15 @@ class VehicleMaintenanceController {
       await transaction.commit();
 
       if (updatedCount) {
+        req.logger.info(`vehicle maintenance detail updated by ${authinfo.name}`);
         return res.status(200).json({ message: "vehicle maintenance detail successfully updated." });
       }
 
+      req.logger.error(`fail to update vehicle maintenance by ${authinfo.name}`);
       return res.status(400).json({ message: "failed to update vehicle maintenance detail." });
     } catch (error) {
       await transaction.rollback();
+      req.logger.error(`fail to update vehicle maintenance by ${authinfo.name}`);
       return res.status(400).json({ message: "failed to update vehicle maintenance detail." });
     }
   };
@@ -143,14 +150,16 @@ class VehicleMaintenanceController {
         await transaction.commit();
 
         if (deletedCount) {
+          req.logger.info(`vehicle maintenance deleted by ${authinfo.name}`);
           return res.status(204).json({ message: "vehicle maintenance detail successfully deleted." });
         }
 
+        req.logger.warn(`fail to delete vehicle maintenance by ${authinfo.name}`);
         return res.status(404).json({ message: "no vehicle maintenance detail found" });
       });
     } catch (error) {
-      console.log(error);
       await transaction.rollback();
+      req.logger.error(`fail to delete vehicle maintenance by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to delete vehicle maintenance detail" });
     }
   };

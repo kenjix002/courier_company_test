@@ -53,9 +53,12 @@ class UserController {
       );
 
       await await transaction.commit();
+
+      req.logger.info(`created user ${req.body.name} by ${authinfo.name}`);
       return res.status(201).json({ message: "user successfully created." });
     } catch (error) {
       await transaction.rollback();
+      req.logger.error(`failed to create user by ${authinfo.name}`);
       return res.status(400).json({ message: "failed to create user." });
     }
   };
@@ -137,16 +140,18 @@ class UserController {
       // Generate jwt
       const info = {
         user_id: user.id,
+        name: user.name,
         role: user.role,
       };
       const jwtToken = jwt.sign(info, process.env.JWT_SECRET, {
         expiresIn: "1h",
       });
 
+      req.logger.info(`user ${user.name} logged in.`);
       return res.status(200).json({ token: jwtToken });
     }
 
-    return res.status(401).send("Wrong username/password.");
+    return res.status(401).send("wrong username/password.");
   };
 }
 

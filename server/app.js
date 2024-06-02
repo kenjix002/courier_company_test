@@ -3,6 +3,7 @@ const { Sequelize } = require("sequelize");
 const routes = require("./src/routes/routes");
 require("dotenv").config();
 const cors = require("cors");
+const winston = require("winston");
 
 // Initialize Sequelize with your database configuration
 const sequelize = new Sequelize({
@@ -15,11 +16,24 @@ const sequelize = new Sequelize({
 });
 
 const app = express();
-const db = require("./src/models");
 const port = process.env.SERVER_PORT;
+const logger = winston.createLogger({
+  level: "info",
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf((info) => {
+      return `${info.timestamp} ${info.level}: ${info.message}`;
+    }),
+  ),
+  transports: [new winston.transports.Console()],
+});
 
 app.use(cors());
 app.use(express.json());
+app.use((req, res, next) => {
+  req.logger = logger;
+  return next();
+});
 app.use("/", routes);
 
 sequelize
