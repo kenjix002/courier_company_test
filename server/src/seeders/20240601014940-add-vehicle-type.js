@@ -26,7 +26,7 @@ module.exports = {
         },
         {
           id: 3,
-          brand: "hino",
+          brand: "Hino",
           model: "300",
           type: "TRUCK",
           availability: false,
