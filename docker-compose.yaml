@@ -1,7 +1,10 @@
 version: "3.8"
 
 services:
-  # react:
+  front:
+    build: ./courier_app
+    ports:
+      - 3000:3000
 
   app:
     build: ./server
