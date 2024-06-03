@@ -1,9 +1,9 @@
 const express = require("express");
 const { Sequelize } = require("sequelize");
 const routes = require("./src/routes/routes");
-require("dotenv").config();
 const cors = require("cors");
 const winston = require("winston");
+require("dotenv").config();
 
 // Initialize Sequelize with your database configuration
 const sequelize = new Sequelize({

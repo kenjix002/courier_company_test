@@ -131,6 +131,10 @@ class UserController {
       where: { username: credential.name },
     });
 
+    if (!authUser) {
+      return res.status(401).json({ message: "wrong username/password." });
+    }
+
     const isPassword = await bcrypt.compare(credential.pass, authUser.password);
 
     if (isPassword) {
@@ -151,7 +155,7 @@ class UserController {
       return res.status(200).json({ token: jwtToken });
     }
 
-    return res.status(401).send("wrong username/password.");
+    return res.status(401).json({ message: "wrong username/password." });
   };
 }
 
