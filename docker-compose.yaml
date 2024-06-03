@@ -4,10 +4,11 @@ services:
   front:
     build: ./courier_app
     ports:
-      - 3000:3000
+      - 8080:8080
 
   app:
     build: ./server
+    restart: always
     ports:
       - 8000:8000
     depends_on:

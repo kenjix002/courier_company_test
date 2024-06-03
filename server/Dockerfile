@@ -9,7 +9,8 @@ RUN npm i
 
 COPY . .
 
+RUN chmod +x entrypoint.sh
+
 EXPOSE 8000
 
-# migrate db, seed db, then start server
-CMD ["sh", "-c", "sleep 30 && npm run migrate && npm run seed && npm run start"]
+ENTRYPOINT ["./entrypoint.sh"]
