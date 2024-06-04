@@ -185,7 +185,7 @@ const VehicleType = () => {
     return (
         <div className="content">
             <div id="vehicle-type-list">
-                <h1>User List</h1>
+                <h1>Vehicle Type List</h1>
                 <table className="table">
                     <thead>
                         <tr>
