@@ -20,7 +20,7 @@ class VehicleController {
       const exists = await Vehicle.findOne(
         {
           where: {
-            user_id: req.body.user_id,
+            [Sequelize.Op.or]: [{ user_id: req.body.user_id }, { registry: req.body.registry }],
           },
         },
         { transaction },
@@ -28,7 +28,7 @@ class VehicleController {
       if (exists) {
         await transaction.commit();
 
-        return res.status(400).json({ message: "user already had a vehicle" });
+        return res.status(400).json({ message: "user already had a vehicle. / Registry existed." });
       }
 
       // Create
@@ -36,6 +36,7 @@ class VehicleController {
         {
           user_id: req.body.user_id,
           vehicle_type_id: req.body.vehicle_type_id,
+          registry: req.body.registry,
           start_date: new Date(),
         },
         { transaction },
@@ -64,7 +65,7 @@ class VehicleController {
       for (const vehicle of vehicles) {
         const user = await User.findOne({ where: { id: vehicle.user_id } });
         const vehicleType = await Vehicle_Type.findOne({ where: { id: vehicle.vehicle_type_id } });
-        vehicleInfo.push({ user, vehicleType });
+        vehicleInfo.push({ id: vehicle.id, user, vehicleType, registry: vehicle.registry });
       }
 
       req.logger.info(`vehicles info retrieved by ${authinfo.name}`);
@@ -111,6 +112,7 @@ class VehicleController {
         {
           user_id: req.body.user_id,
           vehicle_type_id: req.body.vehicle_type_id,
+          registry: req.body.registry,
           start_date: new Date(),
         },
         { where: { id: req.params.id } },
@@ -180,6 +182,11 @@ class VehicleController {
     if (typeof req.vehicle_type_id !== "number") {
       result.status = false;
       result.message = "invalid vehicle type.";
+    }
+
+    if (req.registry.trim() === "") {
+      result.status = false;
+      result.message = "vehicle registry cannot be empty.";
     }
 
     return result;

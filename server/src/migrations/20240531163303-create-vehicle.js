@@ -23,6 +23,9 @@ module.exports = {
           key: "id",
         },
       },
+      registry: {
+        type: Sequelize.STRING,
+      },
       start_date: {
         type: Sequelize.DATE,
       },

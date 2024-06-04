@@ -179,12 +179,12 @@ class VehicleTypeController {
     }
 
     if (req.model.trim() === "") {
-      result.message = "brand cannot be empty";
+      result.message = "model cannot be empty";
       result.status = false;
     }
 
     if (req.type.trim() === "") {
-      result.message = "brand cannot be empty";
+      result.message = "tyype cannot be empty";
       result.status = false;
     }
 

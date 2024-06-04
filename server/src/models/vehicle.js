@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       user_id: DataTypes.INTEGER,
       vehicle_type_id: DataTypes.INTEGER,
+      registry: DataTypes.STRING,
       start_date: DataTypes.DATE,
     },
     {
