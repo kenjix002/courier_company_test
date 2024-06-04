@@ -152,7 +152,11 @@ class UserController {
       });
 
       req.logger.info(`user ${user.name} logged in.`);
-      return res.status(200).json({ token: jwtToken });
+      return res.status(200).json({
+        user_id: user.id,
+        role: user.role,
+        token: jwtToken,
+      });
     }
 
     return res.status(401).json({ message: "wrong username/password." });
