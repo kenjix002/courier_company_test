@@ -32,7 +32,7 @@ class VehicleController {
       }
 
       // Create
-      await Vehicle.create(
+      const created = await Vehicle.create(
         {
           user_id: req.body.user_id,
           vehicle_type_id: req.body.vehicle_type_id,
@@ -45,7 +45,7 @@ class VehicleController {
       await transaction.commit();
 
       req.logger.info(`created new vehicle by ${authinfo.name}`);
-      return res.status(201).json({ message: "vehicle successfully created." });
+      return res.status(201).json({ id: created.id, message: "vehicle successfully created." });
     } catch (error) {
       await transaction.rollback();
 
