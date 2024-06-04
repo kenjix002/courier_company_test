@@ -12,6 +12,7 @@ const vehicleMaintenance = require("../controllers/vehicle-maintenance");
 router.get("/user", authMiddleware, user.get);
 router.post("/user", authMiddleware, user.create);
 router.post("/login", user.login);
+router.post("/verifytoken", user.verifyToken);
 
 // Vehicle Type
 router.get("/vehicle-type", authMiddleware, vehicleType.get);

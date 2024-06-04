@@ -157,6 +157,22 @@ class UserController {
 
     return res.status(401).json({ message: "wrong username/password." });
   };
+
+  verifyToken = async (req, res) => {
+    const token = req.headers.authorization;
+
+    if (!token) {
+      return res.status(401).json({ message: "invalid token." });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(403).json({ message: "invalid token." });
+      }
+
+      return res.status(200).json({ message: "verified." });
+    });
+  };
 }
 
 module.exports = new UserController();
