@@ -67,15 +67,12 @@ class UserController {
     const transaction = await sequelize.transaction();
     const authinfo = req.decoded;
 
+    if (authinfo.role !== "ADMIN") {
+      return res.status(403).json({ message: "forbidden action." });
+    }
+
     try {
-      const user = await User.findOne(
-        {
-          where: {
-            id: authinfo.user_id,
-          },
-        },
-        { transaction },
-      );
+      const user = await User.findAll({}, { transaction });
 
       await transaction.commit();
 

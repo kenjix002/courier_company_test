@@ -9,8 +9,8 @@ const vehicle = require("../controllers/vehicle");
 const vehicleMaintenance = require("../controllers/vehicle-maintenance");
 
 // User
-router.get("/user", authMiddleware, user.get);
-router.post("/user", authMiddleware, user.create);
+router.get("/users", authMiddleware, user.get);
+router.post("/users", authMiddleware, user.create);
 router.post("/login", user.login);
 router.post("/verifytoken", user.verifyToken);
 

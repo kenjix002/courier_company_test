@@ -7,6 +7,6 @@ RUN npm i
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 8080
 
 CMD ["sh", "-c", "npm run start"]
