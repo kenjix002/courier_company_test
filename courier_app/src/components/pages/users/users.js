@@ -61,6 +61,9 @@ const User = () => {
                 })
                 .then((res) => {
                     setUsers(res.data.data);
+                })
+                .catch((error) => {
+                    swal("Error", error.response.data.message, "error");
                 });
         } catch (error) {
             swal("Error", error.response.data.message, "error");
