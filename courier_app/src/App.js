@@ -13,21 +13,21 @@ import VehicleMaintenanceDetails from "./components/pages/vehicleMaintenanceDeta
 import NotFound from "./components/common/404/404";
 
 function App() {
-  return (
-    <main>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/" element={<Navbar />}>
-          <Route path="/users" element={<Users />} />
-          <Route path="/vehicles" exact element={<Vehicles />} />
-          <Route path="/vehicle-maintenance-details" element={<VehicleMaintenanceDetails />} />
-          <Route path="/vehicle-types" element={<VehicleTypes />} />
-          <Route path="/maintenance-types" element={<MaintenanceTypes />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </main>
-  );
+    return (
+        <main>
+            <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="/" element={<Navbar />}>
+                    <Route path="/users" element={<Users />} />
+                    <Route path="/vehicles" exact element={<Vehicles />} />
+                    <Route path="/vehicle-maintenance-details/:vehicle_id" element={<VehicleMaintenanceDetails />} />
+                    <Route path="/vehicle-types" element={<VehicleTypes />} />
+                    <Route path="/maintenance-types" element={<MaintenanceTypes />} />
+                </Route>
+                <Route path="*" element={<NotFound />} />
+            </Routes>
+        </main>
+    );
 }
 
 export default App;

@@ -1,4 +1,4 @@
-const { Sequelize, sequelize, Vehicle, User, Vehicle_Type } = require("../models");
+const { Sequelize, sequelize, Vehicle, User, Vehicle_Type, Vehicle_Maintenance } = require("../models");
 
 class VehicleController {
   create = async (req, res) => {
@@ -29,6 +29,21 @@ class VehicleController {
         await transaction.commit();
 
         return res.status(400).json({ message: "user already had a vehicle. / Registry existed." });
+      }
+
+      // Check availability
+      const availability = await Vehicle_Type.findOne(
+        {
+          where: {
+            id: req.body.vehicle_type_id,
+          },
+        },
+        { transaction },
+      );
+      if (!availability.availability) {
+        await transaction.commit();
+
+        return res.status(400).json({ message: "vehicle not available." });
       }
 
       // Create
@@ -142,6 +157,12 @@ class VehicleController {
       if (authinfo.role !== "ADMIN") {
         return res.status(403).json({ message: "forbidden action." });
       }
+
+      await Vehicle_Maintenance.destroy({
+        where: {
+          vehicle_id: req.params.id,
+        },
+      });
 
       await Vehicle.destroy(
         {

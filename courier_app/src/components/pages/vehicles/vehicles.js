@@ -15,6 +15,7 @@ const Vehicle = () => {
     const [driverId, setDriverId] = useState(0);
     const [vehicleId, setVehicleId] = useState(0);
     const [updateId, setUpdateId] = useState(0);
+    const [isOpen, setIsOpen] = useState(false);
 
     const getCurrentDatetime = () => {
         const now = new Date();
@@ -253,6 +254,12 @@ const Vehicle = () => {
         setRegistry(driverVehicle.registry);
 
         setIsCreate(false);
+        setIsOpen(true);
+    };
+
+    const toggleCollapse = () => {
+        clearState();
+        setIsOpen(!isOpen);
     };
 
     const clearState = () => {
@@ -261,6 +268,7 @@ const Vehicle = () => {
         setRegistry("");
         setIsCreate(true);
         setUpdateId(0);
+        setIsOpen(false);
     };
 
     return (
@@ -326,76 +334,84 @@ const Vehicle = () => {
 
             {role === "ADMIN" && (
                 <div className="driver-vehicle-create">
-                    <h1>create Vehicle</h1>
-                    <form onSubmit={isCreate ? createDriverVehicle : editDriverVehicle} id="driver-vehicle-create-form">
-                        <div className="form-group">
-                            <label htmlFor="registry">Registry</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="registry"
-                                value={registry}
-                                onChange={(e) => {
-                                    setRegistry(e.target.value);
-                                }}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="role">Driver</label>
-                            <select
-                                className="form-control"
-                                id="role"
-                                value={driverId}
-                                onChange={(e) => {
-                                    setDriverId(e.target.value);
-                                }}
-                            >
-                                <option value={0}>None</option>
-                                {driverList.map((driver) => (
-                                    <option key={driver.id} value={driver.id}>
-                                        {driver.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="vehicle">Vehicle</label>
-                            <select
-                                className="form-control"
-                                id="vehicle"
-                                value={vehicleId}
-                                onChange={(e) => {
-                                    setVehicleId(e.target.value);
-                                }}
-                            >
-                                <option value={0}>None</option>
-                                {vehicleList.map((vehicle) => (
-                                    <option key={vehicle.id} value={vehicle.id}>
-                                        {vehicle.brand} | {vehicle.model} | {vehicle.type}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        {!isCreate && (
+                    <h1 onClick={toggleCollapse} style={{ cursor: "pointer" }}>
+                        {isCreate ? "Create" : "Update"} Vehicle {isOpen ? "-" : "+"}
+                    </h1>
+                    {isOpen && (
+                        <form
+                            onSubmit={isCreate ? createDriverVehicle : editDriverVehicle}
+                            id="driver-vehicle-create-form"
+                        >
                             <div className="form-group">
-                                <label htmlFor="datetime">DateTime</label>
+                                <label htmlFor="registry">Registry</label>
                                 <input
-                                    type="datetime-local"
+                                    type="text"
                                     className="form-control"
-                                    id="datetime"
-                                    value={datetime}
+                                    id="registry"
+                                    value={registry}
                                     onChange={(e) => {
-                                        setDatetime(e.target.value);
+                                        setRegistry(e.target.value);
                                     }}
                                 />
                             </div>
-                        )}
+                            <div className="form-group">
+                                <label htmlFor="role">Driver</label>
+                                <select
+                                    className="form-control"
+                                    id="role"
+                                    value={driverId}
+                                    onChange={(e) => {
+                                        setDriverId(e.target.value);
+                                    }}
+                                >
+                                    <option value={0}>None</option>
+                                    {driverList.map((driver) => (
+                                        <option key={driver.id} value={driver.id}>
+                                            {driver.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="vehicle">Vehicle</label>
+                                <select
+                                    className="form-control"
+                                    id="vehicle"
+                                    value={vehicleId}
+                                    onChange={(e) => {
+                                        setVehicleId(e.target.value);
+                                    }}
+                                >
+                                    <option value={0}>None</option>
+                                    {vehicleList.map((vehicle) => (
+                                        <option key={vehicle.id} value={vehicle.id}>
+                                            {vehicle.brand} | {vehicle.model} | {vehicle.type} |{" "}
+                                            {vehicle.availability ? "AVAILABLE" : "OUT"}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
-                        <button type="submit" className="btn btn-primary mt-3">
-                            {isCreate ? "Create" : "Update"}
-                        </button>
-                    </form>
+                            {!isCreate && (
+                                <div className="form-group">
+                                    <label htmlFor="datetime">DateTime</label>
+                                    <input
+                                        type="datetime-local"
+                                        className="form-control"
+                                        id="datetime"
+                                        value={datetime}
+                                        onChange={(e) => {
+                                            setDatetime(e.target.value);
+                                        }}
+                                    />
+                                </div>
+                            )}
+
+                            <button type="submit" className="btn btn-primary mt-3">
+                                {isCreate ? "Create" : "Update"}
+                            </button>
+                        </form>
+                    )}
                 </div>
             )}
         </div>

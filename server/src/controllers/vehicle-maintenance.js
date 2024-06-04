@@ -56,14 +56,31 @@ class VehicleMaintenanceController {
     }
   };
 
+  getCurrentDatetime = (datetime) => {
+    const offset = datetime.getTimezoneOffset() * 60000; // offset in milliseconds
+    const localISOTime = new Date(datetime - offset).toISOString().slice(0, 10);
+    return localISOTime;
+  };
+
   get = async (req, res) => {
     const authinfo = req.decoded;
 
     try {
       const vehicleMaintenance = await Vehicle_Maintenance.findAll({ where: { vehicle_id: req.params.vehicle_id } });
 
+      let maintenanceDetails = [];
+      for (const detail of vehicleMaintenance) {
+        const maintenance = await Maintenance_Type.findOne({ where: { id: detail.maintenance_type_id } });
+
+        maintenanceDetails.push({
+          id: detail.id,
+          due_schedule: this.getCurrentDatetime(detail.due_schedule),
+          maintenance: maintenance,
+        });
+      }
+
       req.logger.info(`vehicle maintenance details retrieved by ${authinfo.name}`);
-      return res.status(200).json({ data: vehicleMaintenance });
+      return res.status(200).json({ data: maintenanceDetails });
     } catch (error) {
       req.logger.error(`fail to retrieve vehicle maintenance details by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to retrieve vehicle maintenance details." });
@@ -107,12 +124,17 @@ class VehicleMaintenanceController {
       const due = new Date();
       due.setMonth(due.getMonth() + maintenanceType.periodic_maintenance_month);
 
+      const updateinfo = {
+        maintenance_type_id: req.body.maintenance_type_id,
+        vehicle_id: req.body.vehicle_id,
+      };
+
+      if (req.body.completed) {
+        updateinfo.due_schedule = due;
+      }
+
       const [updatedCount] = await Vehicle_Maintenance.update(
-        {
-          maintenance_type_id: req.body.maintenance_type_id,
-          vehicle_id: req.body.vehicle_id,
-          due_schedule: due,
-        },
+        updateinfo,
         { where: { id: req.params.id } },
         { transaction },
       );
@@ -172,12 +194,12 @@ class VehicleMaintenanceController {
       status: true,
     };
 
-    if (typeof req.vehicle_id !== "number") {
+    if (typeof req.vehicle_id !== "number" || req.maintenance_type_id === 0) {
       result.status = false;
       result.message = "invalid vehicle.";
     }
 
-    if (typeof req.maintenance_type_id !== "number") {
+    if (typeof req.maintenance_type_id !== "number" || req.maintenance_type_id === 0) {
       result.status = false;
       result.message = "invalid maintenance type.";
     }

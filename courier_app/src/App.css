@@ -1,1 +1,6 @@
-
+.content {
+    width: 70%;
+    position: absolute;
+    right: 0;
+    max-height: 100vh;
+}
