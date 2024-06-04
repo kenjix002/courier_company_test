@@ -61,6 +61,9 @@ const VehicleType = () => {
                 })
                 .then((res) => {
                     setVehicleTypes(res.data.data);
+                })
+                .catch((error) => {
+                    swal("Error", error.response.data.message, "error");
                 });
         } catch (error) {
             swal("Error", error.response.data.message, "error");
@@ -118,6 +121,9 @@ const VehicleType = () => {
                 swal("Success", res.data.message, "success");
                 getVehicleTypes();
                 clearState();
+            })
+            .catch((error) => {
+                swal("Error", error.response.data.message, "error");
             });
     };
 
@@ -144,6 +150,9 @@ const VehicleType = () => {
                         swal("Success", `Successfully deleted number ${index}`, "success");
                         getVehicleTypes();
                         clearState();
+                    })
+                    .catch((error) => {
+                        swal("Error", error.response.data.message, "error");
                     });
             }
         });
