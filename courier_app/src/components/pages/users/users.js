@@ -46,26 +46,30 @@ const User = () => {
         };
         checkAuth();
 
-        const getUsers = async () => {
-            try {
-                await api
-                    .get("/users", {
-                        headers: {
-                            Authorization: "Bearer " + token,
-                        },
-                    })
-                    .then((res) => {
-                        setUsers(res.data.data);
-                    });
-            } catch (error) {
-                swal("Error", error.response.data.message, "error");
-            }
-        };
         getUsers();
     }, [navigate]);
 
+    const getUsers = async () => {
+        const token = localStorage.getItem("authToken");
+
+        try {
+            await api
+                .get("/users", {
+                    headers: {
+                        Authorization: "Bearer " + token,
+                    },
+                })
+                .then((res) => {
+                    setUsers(res.data.data);
+                });
+        } catch (error) {
+            swal("Error", error.response.data.message, "error");
+        }
+    };
+
     const createUser = async (e) => {
         e.preventDefault();
+        const token = localStorage.getItem("authToken");
 
         try {
             const userinfo = {
@@ -78,8 +82,14 @@ const User = () => {
             };
 
             await api
-                .post("/users", userinfo)
+                .post("/users", userinfo, {
+                    headers: {
+                        Authorization: "Bearer " + token,
+                    },
+                })
                 .then((res) => {
+                    getUsers();
+                    clearState();
                     swal("Success", res.data.message, "success");
                 })
                 .catch((error) => {
@@ -92,6 +102,16 @@ const User = () => {
 
     const toggleCollapse = () => {
         setIsOpen(!isOpen);
+    };
+
+    const clearState = () => {
+        setUsername("");
+        setPassword("");
+        setName("");
+        setEmail("");
+        setRole("DRIVER");
+        setClient("");
+        toggleCollapse();
     };
 
     return (
