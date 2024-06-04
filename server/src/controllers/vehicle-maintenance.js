@@ -57,6 +57,8 @@ class VehicleMaintenanceController {
   };
 
   get = async (req, res) => {
+    const authinfo = req.decoded;
+
     try {
       const vehicleMaintenance = await Vehicle_Maintenance.findAll({ where: { vehicle_id: req.params.vehicle_id } });
 

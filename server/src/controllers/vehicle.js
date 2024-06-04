@@ -113,7 +113,7 @@ class VehicleController {
           user_id: req.body.user_id,
           vehicle_type_id: req.body.vehicle_type_id,
           registry: req.body.registry,
-          start_date: new Date(),
+          start_date: req.body.datetime,
         },
         { where: { id: req.params.id } },
         { transaction },
@@ -174,12 +174,12 @@ class VehicleController {
       status: true,
     };
 
-    if (typeof req.user_id !== "number") {
+    if (typeof req.user_id !== "number" || req.user_id === 0) {
       result.status = false;
       result.message = "invalid user.";
     }
 
-    if (typeof req.vehicle_type_id !== "number") {
+    if (typeof req.vehicle_type_id !== "number" || req.vehicle_type_id === 0) {
       result.status = false;
       result.message = "invalid vehicle type.";
     }
