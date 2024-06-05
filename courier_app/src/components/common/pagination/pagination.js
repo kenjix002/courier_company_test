@@ -32,10 +32,10 @@ const Pagination = ({ currentPage, totalPages, handlePageChange }) => {
                     </button>
                 </li>
 
-                {pagination.map((n) => (
-                    <li>
+                {pagination.map((n, index) => (
+                    <li key={index}>
                         {n === "..." ? (
-                            <button className="page-link" disabled key={n}>
+                            <button className="page-link" disabled>
                                 {n}
                             </button>
                         ) : (
@@ -43,7 +43,6 @@ const Pagination = ({ currentPage, totalPages, handlePageChange }) => {
                                 className="page-link"
                                 onClick={() => handlePageChange(n)}
                                 disabled={currentPage === n}
-                                key={n}
                             >
                                 {n}
                             </button>
