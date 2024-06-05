@@ -38,4 +38,8 @@ router.post("/vehicle-maintenance", authMiddleware, vehicleMaintenance.create);
 router.put("/vehicle-maintenance/:id", authMiddleware, vehicleMaintenance.update);
 router.delete("/vehicle-maintenance/:id", authMiddleware, vehicleMaintenance.delete);
 
+router.get("/healthcheck", (req, res) => {
+  return res.status(200);
+});
+
 module.exports = router;
