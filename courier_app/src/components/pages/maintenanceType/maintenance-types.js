@@ -1,5 +1,5 @@
 import "./maintenance-types.css";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
 import swal from "sweetalert";
@@ -21,6 +21,9 @@ const MaintenanceType = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [maxPerPage, setMaxPerPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
+    const [sortField, setSortField] = useState([]);
+    const [sort, setSort] = useState("");
+    const [order, setOrder] = useState("ASC");
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -49,15 +52,20 @@ const MaintenanceType = () => {
 
         checkAuth();
 
-        getMaintenanceTypes(currentPage);
-    }, [navigate, currentPage]);
+        getMaintenanceTypes(currentPage, sort, order);
+    }, [navigate, currentPage, sort, order]);
 
-    const getMaintenanceTypes = async (page) => {
+    const getMaintenanceTypes = async (page, sort, order) => {
         const token = localStorage.getItem("authToken");
 
         try {
+            let sortQuery = "";
+            if (sort !== "") {
+                sortQuery = `&sortBy=${sort}&order=${order}`;
+            }
+
             await api
-                .get(`/maintenance-type/?page=${page}`, {
+                .get(`/maintenance-type/?page=${page}${sortQuery}`, {
                     headers: {
                         Authorization: "Bearer " + token,
                     },
@@ -67,6 +75,7 @@ const MaintenanceType = () => {
                     setTotalPages(res.data.pageinfo.totalPages);
                     setMaxPerPage(res.data.pageinfo.maxItemPerPage);
                     setTotalItems(res.data.pageinfo.totalItems);
+                    setSortField(res.data.sortField);
                     setMaintenanceType(res.data.data);
                 })
                 .catch((error) => {
@@ -95,7 +104,7 @@ const MaintenanceType = () => {
                     },
                 })
                 .then((res) => {
-                    getMaintenanceTypes(currentPage);
+                    getMaintenanceTypes(currentPage, sort, order);
                     clearState();
                     swal("Success", res.data.message, "success");
                 })
@@ -125,7 +134,7 @@ const MaintenanceType = () => {
             })
             .then((res) => {
                 swal("Success", res.data.message, "success");
-                getMaintenanceTypes(currentPage);
+                getMaintenanceTypes(currentPage, sort, order);
                 clearState();
             })
             .catch((error) => {
@@ -155,7 +164,7 @@ const MaintenanceType = () => {
                     .then((res) => {
                         swal("Success", `Successfully deleted number ${index}`, "success");
                         clearState();
-                        getMaintenanceTypes(1);
+                        getMaintenanceTypes(1, sort, order);
                     })
                     .catch((error) => {
                         swal("Error", error.response.data.message, "error");
@@ -201,10 +210,37 @@ const MaintenanceType = () => {
         }
     };
 
+    const handleSortChange = (e) => {
+        const selectedOption = e.target.selectedOptions[0];
+        setSort(selectedOption.value);
+        setOrder(selectedOption.getAttribute("data-order"));
+    };
+
     return (
         <div className="content">
             <div id="maintenance-type-list">
                 <h1>Maintenance Type List</h1>
+                <div className="sorting row">
+                    <div className="col-sm-6">
+                        <div className="form-group">
+                            <label htmlFor="user-sort">Sort</label>
+                            <select name="user-sort" className="form-control" onChange={(e) => handleSortChange(e)}>
+                                <option value="">None</option>
+                                {sortField.map((field) => (
+                                    <React.Fragment key={field}>
+                                        <option value={field} data-order="ASC">
+                                            {field}+
+                                        </option>
+                                        <option value={field} data-order="DESC">
+                                            {field}-
+                                        </option>
+                                    </React.Fragment>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <table className="table">
                     <thead>
                         <tr>

@@ -39,7 +39,7 @@ router.put("/vehicle-maintenance/:id", authMiddleware, vehicleMaintenance.update
 router.delete("/vehicle-maintenance/:id", authMiddleware, vehicleMaintenance.delete);
 
 router.get("/healthcheck", (req, res) => {
-  return res.status(200);
+  return res.status(200).send("OK");
 });
 
 module.exports = router;

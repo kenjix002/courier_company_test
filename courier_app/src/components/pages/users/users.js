@@ -1,5 +1,5 @@
 import "./users.css";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
 import swal from "sweetalert";
@@ -22,6 +22,9 @@ const User = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [maxPerPage, setMaxPerPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
+    const [sortField, setSortField] = useState([]);
+    const [sort, setSort] = useState("");
+    const [order, setOrder] = useState("ASC");
 
     // Auth
     useEffect(() => {
@@ -51,15 +54,20 @@ const User = () => {
         };
         checkAuth();
 
-        getUsers(currentPage);
-    }, [navigate, currentPage]);
+        getUsers(currentPage, sort, order);
+    }, [navigate, currentPage, sort, order]);
 
-    const getUsers = async (page) => {
+    const getUsers = async (page, sort, order) => {
         const token = localStorage.getItem("authToken");
 
         try {
+            let sortQuery = "";
+            if (sort !== "") {
+                sortQuery = `&sortBy=${sort}&order=${order}`;
+            }
+
             await api
-                .get(`/users/?page=${page}`, {
+                .get(`/users/?page=${page}${sortQuery}`, {
                     headers: {
                         Authorization: "Bearer " + token,
                     },
@@ -69,6 +77,7 @@ const User = () => {
                     setTotalPages(res.data.pageinfo.totalPages);
                     setMaxPerPage(res.data.pageinfo.maxItemPerPage);
                     setTotalItems(res.data.pageinfo.totalItems);
+                    setSortField(res.data.sortField);
                     setUsers(res.data.data);
                 })
                 .catch((error) => {
@@ -100,7 +109,7 @@ const User = () => {
                     },
                 })
                 .then((res) => {
-                    getUsers(currentPage);
+                    getUsers(currentPage, sort, order);
                     clearState();
                     swal("Success", res.data.message, "success");
                 })
@@ -132,10 +141,37 @@ const User = () => {
         }
     };
 
+    const handleSortChange = (e) => {
+        const selectedOption = e.target.selectedOptions[0];
+        setSort(selectedOption.value);
+        setOrder(selectedOption.getAttribute("data-order"));
+    };
+
     return (
         <div className="content">
             <div id="user-list">
                 <h1>User List</h1>
+                <div className="sorting row">
+                    <div className="col-sm-6">
+                        <div className="form-group">
+                            <label htmlFor="user-sort">Sort</label>
+                            <select name="user-sort" className="form-control" onChange={(e) => handleSortChange(e)}>
+                                <option value="">None</option>
+                                {sortField.map((field) => (
+                                    <React.Fragment key={field}>
+                                        <option value={field} data-order="ASC">
+                                            {field}+
+                                        </option>
+                                        <option value={field} data-order="DESC">
+                                            {field}-
+                                        </option>
+                                    </React.Fragment>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <table className="table">
                     <thead>
                         <tr>

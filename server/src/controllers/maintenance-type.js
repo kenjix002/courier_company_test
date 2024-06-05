@@ -1,5 +1,7 @@
 const { Sequelize, sequelize, Maintenance_Type } = require("../models");
 
+const sortField = ["type", "priority", "periodic_maintenance_month"];
+
 class MaintenanceTypeController {
   create = async (req, res) => {
     const transaction = await sequelize.transaction();
@@ -52,6 +54,7 @@ class MaintenanceTypeController {
   };
 
   get = async (req, res) => {
+    const transaction = await sequelize.transaction();
     const authinfo = req.decoded;
     try {
       if (authinfo.role !== "ADMIN") {
@@ -68,7 +71,23 @@ class MaintenanceTypeController {
         offset = (page - 1) * limit;
       }
 
-      const maintenanceType = await Maintenance_Type.findAndCountAll({ limit, offset });
+      // sorting and ordering
+      let sortBy = "id";
+      let order = "ASC";
+      if (req.query.sortBy) {
+        sortBy = req.query.sortBy;
+      }
+      if (req.query.order) {
+        order = req.query.order;
+      }
+
+      const maintenanceType = await Maintenance_Type.findAndCountAll({
+        order: [[sortBy, order]],
+        limit,
+        offset,
+        transaction,
+      });
+      await transaction.commit();
 
       const pageinfo = {
         totalItems: maintenanceType.count,
@@ -78,7 +97,7 @@ class MaintenanceTypeController {
       };
 
       req.logger.info(`maintenance types retrieved by ${authinfo.name}`);
-      return res.status(200).json({ data: maintenanceType.rows, pageinfo });
+      return res.status(200).json({ data: maintenanceType.rows, pageinfo, sortField });
     } catch (error) {
       req.logger.error(`fail to retrieve maintenance types by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to retrieve maintenance types." });

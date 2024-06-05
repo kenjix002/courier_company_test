@@ -1,5 +1,5 @@
 import "./vehicle-maintenance.css";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../../services/api";
 import swal from "sweetalert";
@@ -20,6 +20,9 @@ const VehicleMaintenance = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [maxPerPage, setMaxPerPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
+    const [sortField, setSortField] = useState([]);
+    const [sort, setSort] = useState("");
+    const [order, setOrder] = useState("ASC");
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -45,12 +48,12 @@ const VehicleMaintenance = () => {
         };
 
         checkAuth();
-        getVehicleMaintenance(vehicle_id, currentPage);
+        getVehicleMaintenance(vehicle_id, currentPage, sort, order);
 
         if (role === "ADMIN") {
             getMaintenanceType();
         }
-    }, [navigate, role, vehicle_id, currentPage]);
+    }, [navigate, role, vehicle_id, currentPage, sort, order]);
 
     const getMaintenanceType = async () => {
         const token = localStorage.getItem("authToken");
@@ -73,12 +76,17 @@ const VehicleMaintenance = () => {
         }
     };
 
-    const getVehicleMaintenance = async (vehicle_id, page) => {
+    const getVehicleMaintenance = async (vehicle_id, page, sort, order) => {
         const token = localStorage.getItem("authToken");
 
         try {
+            let sortQuery = "";
+            if (sort !== "") {
+                sortQuery = `&sortBy=${sort}&order=${order}`;
+            }
+
             await api
-                .get(`/vehicle-maintenance/${vehicle_id}/?page=${page}`, {
+                .get(`/vehicle-maintenance/${vehicle_id}/?page=${page}${sortQuery}`, {
                     headers: {
                         Authorization: "Bearer " + token,
                     },
@@ -88,6 +96,7 @@ const VehicleMaintenance = () => {
                     setTotalPages(res.data.pageinfo.totalPages);
                     setMaxPerPage(res.data.pageinfo.maxItemPerPage);
                     setTotalItems(res.data.pageinfo.totalItems);
+                    setSortField(res.data.sortField);
                     setMaintenanceDetails(res.data.data);
                 })
                 .catch((error) => {
@@ -115,7 +124,7 @@ const VehicleMaintenance = () => {
                     },
                 })
                 .then((res) => {
-                    getVehicleMaintenance(vehicle_id, currentPage);
+                    getVehicleMaintenance(vehicle_id, currentPage, sort, order);
                     clearState();
                     swal("Success", res.data.message, "success");
                 })
@@ -144,7 +153,7 @@ const VehicleMaintenance = () => {
             })
             .then((res) => {
                 swal("Success", res.data.message, "success");
-                getVehicleMaintenance(vehicle_id, currentPage);
+                getVehicleMaintenance(vehicle_id, currentPage, sort, order);
                 clearState();
             })
             .catch((error) => {
@@ -178,7 +187,7 @@ const VehicleMaintenance = () => {
                     })
                     .then((res) => {
                         swal("Success", `Successfully completed number ${index}`, "success");
-                        getVehicleMaintenance(vehicle_id, currentPage);
+                        getVehicleMaintenance(vehicle_id, currentPage, sort, order);
                         clearState();
                     })
                     .catch((error) => {
@@ -210,7 +219,7 @@ const VehicleMaintenance = () => {
                     .then((res) => {
                         swal("Success", `Successfully deleted number ${index}`, "success");
                         clearState();
-                        getVehicleMaintenance(vehicle_id, 1);
+                        getVehicleMaintenance(vehicle_id, 1, sort, order);
                     })
                     .catch((error) => {
                         swal("Error", error.response.data.message, "error");
@@ -244,10 +253,37 @@ const VehicleMaintenance = () => {
         }
     };
 
+    const handleSortChange = (e) => {
+        const selectedOption = e.target.selectedOptions[0];
+        setSort(selectedOption.value);
+        setOrder(selectedOption.getAttribute("data-order"));
+    };
+
     return (
         <div className="content">
             <div id="vehicle-maintenance-list">
                 <h1>Vehicle Maintenance Detail List</h1>
+                <div className="sorting row">
+                    <div className="col-sm-6">
+                        <div className="form-group">
+                            <label htmlFor="user-sort">Sort</label>
+                            <select name="user-sort" className="form-control" onChange={(e) => handleSortChange(e)}>
+                                <option value="">None</option>
+                                {sortField.map((field) => (
+                                    <React.Fragment key={field}>
+                                        <option value={field} data-order="ASC">
+                                            {field}+
+                                        </option>
+                                        <option value={field} data-order="DESC">
+                                            {field}-
+                                        </option>
+                                    </React.Fragment>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <table className="table">
                     <thead>
                         <tr>

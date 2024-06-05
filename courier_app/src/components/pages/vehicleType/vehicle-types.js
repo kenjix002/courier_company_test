@@ -1,5 +1,5 @@
 import "./vehicle-types.css";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
 import swal from "sweetalert";
@@ -22,6 +22,9 @@ const VehicleType = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [maxPerPage, setMaxPerPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
+    const [sortField, setSortField] = useState([]);
+    const [sort, setSort] = useState("");
+    const [order, setOrder] = useState("ASC");
 
     // Auth
     useEffect(() => {
@@ -51,15 +54,20 @@ const VehicleType = () => {
 
         checkAuth();
 
-        getVehicleTypes(currentPage);
-    }, [navigate, currentPage]);
+        getVehicleTypes(currentPage, sort, order);
+    }, [navigate, currentPage, sort, order]);
 
-    const getVehicleTypes = async (page) => {
+    const getVehicleTypes = async (page, sort, order) => {
         const token = localStorage.getItem("authToken");
 
         try {
+            let sortQuery = "";
+            if (sort !== "") {
+                sortQuery = `&sortBy=${sort}&order=${order}`;
+            }
+
             await api
-                .get(`/vehicle-type/?page=${page}`, {
+                .get(`/vehicle-type/?page=${page}${sortQuery}`, {
                     headers: {
                         Authorization: "Bearer " + token,
                     },
@@ -69,6 +77,7 @@ const VehicleType = () => {
                     setTotalPages(res.data.pageinfo.totalPages);
                     setMaxPerPage(res.data.pageinfo.maxItemPerPage);
                     setTotalItems(res.data.pageinfo.totalItems);
+                    setSortField(res.data.sortField);
                     setVehicleTypes(res.data.data);
                 })
                 .catch((error) => {
@@ -97,7 +106,7 @@ const VehicleType = () => {
                     },
                 })
                 .then((res) => {
-                    getVehicleTypes(currentPage);
+                    getVehicleTypes(currentPage, sort, order);
                     clearState();
                     swal("Success", res.data.message, "success");
                 })
@@ -128,7 +137,7 @@ const VehicleType = () => {
             })
             .then((res) => {
                 swal("Success", res.data.message, "success");
-                getVehicleTypes(currentPage);
+                getVehicleTypes(currentPage, sort, order);
                 clearState();
             })
             .catch((error) => {
@@ -158,7 +167,7 @@ const VehicleType = () => {
                     .then((res) => {
                         swal("Success", `Successfully deleted number ${index}`, "success");
                         clearState();
-                        getVehicleTypes(1);
+                        getVehicleTypes(1, sort, order);
                     })
                     .catch((error) => {
                         swal("Error", error.response.data.message, "error");
@@ -206,10 +215,37 @@ const VehicleType = () => {
         }
     };
 
+    const handleSortChange = (e) => {
+        const selectedOption = e.target.selectedOptions[0];
+        setSort(selectedOption.value);
+        setOrder(selectedOption.getAttribute("data-order"));
+    };
+
     return (
         <div className="content">
             <div id="vehicle-type-list">
                 <h1>Vehicle Type List</h1>
+                <div className="sorting row">
+                    <div className="col-sm-6">
+                        <div className="form-group">
+                            <label htmlFor="user-sort">Sort</label>
+                            <select name="user-sort" className="form-control" onChange={(e) => handleSortChange(e)}>
+                                <option value="">None</option>
+                                {sortField.map((field) => (
+                                    <React.Fragment key={field}>
+                                        <option value={field} data-order="ASC">
+                                            {field}+
+                                        </option>
+                                        <option value={field} data-order="DESC">
+                                            {field}-
+                                        </option>
+                                    </React.Fragment>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <table className="table">
                     <thead>
                         <tr>

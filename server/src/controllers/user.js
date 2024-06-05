@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const basicAuth = require("basic-auth");
 const jwt = require("jsonwebtoken");
 
+const sortField = ["role", "name", "email"];
+
 class UserController {
   create = async (req, res) => {
     const transaction = await sequelize.transaction();
@@ -81,8 +83,18 @@ class UserController {
       offset = (page - 1) * limit;
     }
 
+    // sorting and ordering
+    let sortBy = "id";
+    let order = "ASC";
+    if (req.query.sortBy) {
+      sortBy = req.query.sortBy;
+    }
+    if (req.query.order) {
+      order = req.query.order;
+    }
+
     try {
-      const user = await User.findAndCountAll({ limit, offset }, { transaction });
+      const user = await User.findAndCountAll({ order: [[sortBy, order]], limit, offset, transaction });
 
       await transaction.commit();
 
@@ -93,7 +105,7 @@ class UserController {
         maxItemPerPage: limit,
       };
 
-      return res.status(200).json({ data: user.rows, pageinfo });
+      return res.status(200).json({ data: user.rows, pageinfo, sortField });
     } catch (error) {
       return res.status(500).json({ message: "failed to retrieve user." });
     }

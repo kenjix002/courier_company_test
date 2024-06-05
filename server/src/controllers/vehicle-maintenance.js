@@ -1,5 +1,7 @@
 const { Sequelize, sequelize, Maintenance_Type, Vehicle_Maintenance } = require("../models");
 
+const sortField = ["type", "due_schedule"];
+
 class VehicleMaintenanceController {
   create = async (req, res) => {
     const transaction = await sequelize.transaction();
@@ -63,6 +65,7 @@ class VehicleMaintenanceController {
   };
 
   get = async (req, res) => {
+    const transaction = await sequelize.transaction();
     const authinfo = req.decoded;
 
     try {
@@ -76,11 +79,25 @@ class VehicleMaintenanceController {
         offset = (page - 1) * limit;
       }
 
+      // sorting and ordering
+      let sortBy = "due_schedule";
+      let order = "DESC";
+      if (req.query.sortBy) {
+        sortBy = req.query.sortBy;
+      }
+      if (req.query.order) {
+        order = req.query.order;
+      }
+
       const vehicleMaintenance = await Vehicle_Maintenance.findAndCountAll({
         where: { vehicle_id: req.params.vehicle_id },
+        include: [{ model: Maintenance_Type }],
+        order: [[{ Maintenance_Type }, sortBy, order]],
         limit,
         offset,
+        transaction,
       });
+      await transaction.commit();
 
       const pageinfo = {
         totalItems: vehicleMaintenance.count,
@@ -101,7 +118,7 @@ class VehicleMaintenanceController {
       }
 
       req.logger.info(`vehicle maintenance details retrieved by ${authinfo.name}`);
-      return res.status(200).json({ data: maintenanceDetails, pageinfo });
+      return res.status(200).json({ data: maintenanceDetails, pageinfo, sortField });
     } catch (error) {
       req.logger.error(`fail to retrieve vehicle maintenance details by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to retrieve vehicle maintenance details." });

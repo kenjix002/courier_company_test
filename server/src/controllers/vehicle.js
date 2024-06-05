@@ -1,5 +1,7 @@
 const { Sequelize, sequelize, Vehicle, User, Vehicle_Type, Vehicle_Maintenance } = require("../models");
 
+const sortField = ["registry", "name", "client", "brand", "model", "type"];
+
 class VehicleController {
   create = async (req, res) => {
     const transaction = await sequelize.transaction();
@@ -70,6 +72,7 @@ class VehicleController {
   };
 
   get = async (req, res) => {
+    const transaction = await sequelize.transaction();
     const authinfo = req.decoded;
 
     try {
@@ -83,9 +86,29 @@ class VehicleController {
         offset = (page - 1) * limit;
       }
 
-      const filter =
-        authinfo.role !== "ADMIN" ? { where: { user_id: authinfo.user_id }, limit, offset } : { limit, offset };
+      // sorting and ordering
+      let sortBy = "name";
+      let order = "ASC";
+      if (req.query.sortBy) {
+        sortBy = req.query.sortBy;
+      }
+      if (req.query.order) {
+        order = req.query.order;
+      }
+
+      const filter = {
+        include: [{ model: User }, { model: Vehicle_Type }],
+        order: [[{ User, Vehicle_Type }, sortBy, order]],
+        limit,
+        offset,
+        transaction,
+      };
+      if (authinfo.role !== "ADMIN") {
+        filter.where = { user_id: authinfo.user_id };
+      }
+
       const vehicles = await Vehicle.findAndCountAll(filter);
+      await transaction.commit();
 
       const pageinfo = {
         totalItems: vehicles.count,
@@ -102,7 +125,7 @@ class VehicleController {
       }
 
       req.logger.info(`vehicles info retrieved by ${authinfo.name}`);
-      return res.status(200).json({ data: vehicleInfo, pageinfo });
+      return res.status(200).json({ data: vehicleInfo, pageinfo, sortField });
     } catch (error) {
       req.logger.error(`fail to retrieve vehicles info by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to retrieve vehicles." });

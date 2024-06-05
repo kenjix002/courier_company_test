@@ -1,5 +1,7 @@
 const { Sequelize, sequelize, Vehicle_Type } = require("../models");
 
+const sortField = ["brand", "model", "type", "availability"];
+
 class VehicleTypeController {
   create = async (req, res) => {
     const transaction = await sequelize.transaction();
@@ -56,6 +58,7 @@ class VehicleTypeController {
   };
 
   get = async (req, res) => {
+    const transaction = await sequelize.transaction();
     const authinfo = req.decoded;
 
     // pagination
@@ -68,12 +71,23 @@ class VehicleTypeController {
       offset = (page - 1) * limit;
     }
 
+    // sorting and ordering
+    let sortBy = "id";
+    let order = "ASC";
+    if (req.query.sortBy) {
+      sortBy = req.query.sortBy;
+    }
+    if (req.query.order) {
+      order = req.query.order;
+    }
+
     try {
       if (authinfo.role !== "ADMIN") {
         return res.status(403).json({ message: "forbidden action." });
       }
 
-      const VehicleType = await Vehicle_Type.findAndCountAll({ limit, offset });
+      const VehicleType = await Vehicle_Type.findAndCountAll({ order: [[sortBy, order]], limit, offset, transaction });
+      await transaction.commit();
 
       const pageinfo = {
         totalItems: VehicleType.count,
@@ -83,7 +97,7 @@ class VehicleTypeController {
       };
 
       req.logger.info(`vehicle types retrieved by ${authinfo.name}`);
-      return res.status(200).json({ data: VehicleType.rows, pageinfo });
+      return res.status(200).json({ data: VehicleType.rows, pageinfo, sortField });
     } catch (error) {
       req.logger.error(`failed to retrieve vehicle types by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to retrive vehicle types." });
