@@ -58,15 +58,32 @@ class VehicleTypeController {
   get = async (req, res) => {
     const authinfo = req.decoded;
 
+    // pagination
+    let page = null;
+    let limit = null;
+    let offset = null;
+    if (req.query.page) {
+      page = req.query.page;
+      limit = 5;
+      offset = (page - 1) * limit;
+    }
+
     try {
       if (authinfo.role !== "ADMIN") {
         return res.status(403).json({ message: "forbidden action." });
       }
 
-      const vehicleTypes = await Vehicle_Type.findAll({});
+      const VehicleType = await Vehicle_Type.findAndCountAll({ limit, offset });
+
+      const pageinfo = {
+        totalItems: VehicleType.count,
+        totalPages: Math.ceil(VehicleType.count / limit),
+        currentPage: page,
+        maxItemPerPage: limit,
+      };
 
       req.logger.info(`vehicle types retrieved by ${authinfo.name}`);
-      return res.status(200).json({ data: vehicleTypes });
+      return res.status(200).json({ data: VehicleType.rows, pageinfo });
     } catch (error) {
       req.logger.error(`failed to retrieve vehicle types by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to retrive vehicle types." });

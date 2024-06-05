@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
 import swal from "sweetalert";
+import Pagination from "../../common/pagination/pagination";
 
 const MaintenanceType = () => {
     const navigate = useNavigate();
@@ -16,6 +17,10 @@ const MaintenanceType = () => {
 
     const [isOpen, setIsOpen] = useState(false);
     const [isCreate, setIsCreate] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [maxPerPage, setMaxPerPage] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -44,20 +49,24 @@ const MaintenanceType = () => {
 
         checkAuth();
 
-        getMaintenanceTypes();
-    }, [navigate]);
+        getMaintenanceTypes(currentPage);
+    }, [navigate, currentPage]);
 
-    const getMaintenanceTypes = async () => {
+    const getMaintenanceTypes = async (page) => {
         const token = localStorage.getItem("authToken");
 
         try {
             await api
-                .get("/maintenance-type", {
+                .get(`/maintenance-type/?page=${page}`, {
                     headers: {
                         Authorization: "Bearer " + token,
                     },
                 })
                 .then((res) => {
+                    setCurrentPage(Number(res.data.pageinfo.currentPage));
+                    setTotalPages(res.data.pageinfo.totalPages);
+                    setMaxPerPage(res.data.pageinfo.maxItemPerPage);
+                    setTotalItems(res.data.pageinfo.totalItems);
                     setMaintenanceType(res.data.data);
                 })
                 .catch((error) => {
@@ -86,7 +95,7 @@ const MaintenanceType = () => {
                     },
                 })
                 .then((res) => {
-                    getMaintenanceTypes();
+                    getMaintenanceTypes(currentPage);
                     clearState();
                     swal("Success", res.data.message, "success");
                 })
@@ -116,7 +125,7 @@ const MaintenanceType = () => {
             })
             .then((res) => {
                 swal("Success", res.data.message, "success");
-                getMaintenanceTypes();
+                getMaintenanceTypes(currentPage);
                 clearState();
             })
             .catch((error) => {
@@ -145,8 +154,8 @@ const MaintenanceType = () => {
                     })
                     .then((res) => {
                         swal("Success", `Successfully deleted number ${index}`, "success");
-                        getMaintenanceTypes();
                         clearState();
+                        getMaintenanceTypes(1);
                     })
                     .catch((error) => {
                         swal("Error", error.response.data.message, "error");
@@ -186,6 +195,12 @@ const MaintenanceType = () => {
         setUpdateId(0);
     };
 
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
     return (
         <div className="content">
             <div id="maintenance-type-list">
@@ -203,7 +218,7 @@ const MaintenanceType = () => {
                     <tbody>
                         {maintenanceType.map((maintenance, index) => (
                             <tr key={maintenance.id}>
-                                <th scope="row">{index + 1}</th>
+                                <th scope="row">{(currentPage - 1) * maxPerPage + index + 1}</th>
                                 <td>{maintenance.type}</td>
                                 <td>{maintenance.priority}</td>
                                 <td>{maintenance.periodic_maintenance_month}</td>
@@ -214,7 +229,7 @@ const MaintenanceType = () => {
                                     <button
                                         className="btn btn-danger"
                                         value={maintenance.id}
-                                        data-id={index + 1}
+                                        data-id={(currentPage - 1) * maxPerPage + index + 1}
                                         onClick={deleteMaintenanceType}
                                     >
                                         Del
@@ -224,6 +239,10 @@ const MaintenanceType = () => {
                         ))}
                     </tbody>
                 </table>
+
+                {totalItems > maxPerPage && (
+                    <Pagination currentPage={currentPage} totalPages={totalPages} handlePageChange={handlePageChange} />
+                )}
             </div>
 
             <hr />

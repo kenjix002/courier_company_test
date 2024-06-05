@@ -66,10 +66,31 @@ class VehicleMaintenanceController {
     const authinfo = req.decoded;
 
     try {
-      const vehicleMaintenance = await Vehicle_Maintenance.findAll({ where: { vehicle_id: req.params.vehicle_id } });
+      // pagination
+      let page = null;
+      let limit = null;
+      let offset = null;
+      if (req.query.page) {
+        page = req.query.page;
+        limit = 5;
+        offset = (page - 1) * limit;
+      }
+
+      const vehicleMaintenance = await Vehicle_Maintenance.findAndCountAll({
+        where: { vehicle_id: req.params.vehicle_id },
+        limit,
+        offset,
+      });
+
+      const pageinfo = {
+        totalItems: vehicleMaintenance.count,
+        totalPages: Math.ceil(vehicleMaintenance.count / limit),
+        currentPage: page,
+        maxItemPerPage: limit,
+      };
 
       let maintenanceDetails = [];
-      for (const detail of vehicleMaintenance) {
+      for (const detail of vehicleMaintenance.rows) {
         const maintenance = await Maintenance_Type.findOne({ where: { id: detail.maintenance_type_id } });
 
         maintenanceDetails.push({
@@ -80,7 +101,7 @@ class VehicleMaintenanceController {
       }
 
       req.logger.info(`vehicle maintenance details retrieved by ${authinfo.name}`);
-      return res.status(200).json({ data: maintenanceDetails });
+      return res.status(200).json({ data: maintenanceDetails, pageinfo });
     } catch (error) {
       req.logger.error(`fail to retrieve vehicle maintenance details by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to retrieve vehicle maintenance details." });

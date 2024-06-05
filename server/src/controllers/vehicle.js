@@ -73,18 +73,36 @@ class VehicleController {
     const authinfo = req.decoded;
 
     try {
-      const filter = authinfo.role !== "ADMIN" ? { where: { user_id: authinfo.user_id } } : {};
-      const vehicles = await Vehicle.findAll(filter);
+      // pagination
+      let page = null;
+      let limit = null;
+      let offset = null;
+      if (req.query.page) {
+        page = req.query.page;
+        limit = 5;
+        offset = (page - 1) * limit;
+      }
+
+      const filter =
+        authinfo.role !== "ADMIN" ? { where: { user_id: authinfo.user_id }, limit, offset } : { limit, offset };
+      const vehicles = await Vehicle.findAndCountAll(filter);
+
+      const pageinfo = {
+        totalItems: vehicles.count,
+        totalPages: Math.ceil(vehicles.count / limit),
+        currentPage: page,
+        maxItemPerPage: limit,
+      };
 
       let vehicleInfo = [];
-      for (const vehicle of vehicles) {
+      for (const vehicle of vehicles.rows) {
         const user = await User.findOne({ where: { id: vehicle.user_id } });
         const vehicleType = await Vehicle_Type.findOne({ where: { id: vehicle.vehicle_type_id } });
         vehicleInfo.push({ id: vehicle.id, user, vehicleType, registry: vehicle.registry });
       }
 
       req.logger.info(`vehicles info retrieved by ${authinfo.name}`);
-      return res.status(200).json({ data: vehicleInfo });
+      return res.status(200).json({ data: vehicleInfo, pageinfo });
     } catch (error) {
       req.logger.error(`fail to retrieve vehicles info by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to retrieve vehicles." });

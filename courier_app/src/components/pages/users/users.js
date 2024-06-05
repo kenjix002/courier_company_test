@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
 import swal from "sweetalert";
+import Pagination from "../../common/pagination/pagination";
 
 const User = () => {
     const navigate = useNavigate();
@@ -17,6 +18,10 @@ const User = () => {
     const [client, setClient] = useState("");
 
     const [isOpen, setIsOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [maxPerPage, setMaxPerPage] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
 
     // Auth
     useEffect(() => {
@@ -46,20 +51,24 @@ const User = () => {
         };
         checkAuth();
 
-        getUsers();
-    }, [navigate]);
+        getUsers(currentPage);
+    }, [navigate, currentPage]);
 
-    const getUsers = async () => {
+    const getUsers = async (page) => {
         const token = localStorage.getItem("authToken");
 
         try {
             await api
-                .get("/users", {
+                .get(`/users/?page=${page}`, {
                     headers: {
                         Authorization: "Bearer " + token,
                     },
                 })
                 .then((res) => {
+                    setCurrentPage(Number(res.data.pageinfo.currentPage));
+                    setTotalPages(res.data.pageinfo.totalPages);
+                    setMaxPerPage(res.data.pageinfo.maxItemPerPage);
+                    setTotalItems(res.data.pageinfo.totalItems);
                     setUsers(res.data.data);
                 })
                 .catch((error) => {
@@ -91,7 +100,7 @@ const User = () => {
                     },
                 })
                 .then((res) => {
-                    getUsers();
+                    getUsers(currentPage);
                     clearState();
                     swal("Success", res.data.message, "success");
                 })
@@ -117,6 +126,12 @@ const User = () => {
         toggleCollapse();
     };
 
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
     return (
         <div className="content">
             <div id="user-list">
@@ -133,7 +148,7 @@ const User = () => {
                     <tbody>
                         {users.map((user, index) => (
                             <tr key={user.id}>
-                                <th scope="row">{index + 1}</th>
+                                <th scope="row">{(currentPage - 1) * maxPerPage + index + 1}</th>
                                 <td>{user.name}</td>
                                 <td>{user.email}</td>
                                 <td>{user.role}</td>
@@ -141,6 +156,10 @@ const User = () => {
                         ))}
                     </tbody>
                 </table>
+
+                {totalItems > maxPerPage && (
+                    <Pagination currentPage={currentPage} totalPages={totalPages} handlePageChange={handlePageChange} />
+                )}
             </div>
 
             <hr />

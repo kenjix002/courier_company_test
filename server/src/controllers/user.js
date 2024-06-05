@@ -71,12 +71,29 @@ class UserController {
       return res.status(403).json({ message: "forbidden action." });
     }
 
+    // pagination
+    let page = null;
+    let limit = null;
+    let offset = null;
+    if (req.query.page) {
+      page = req.query.page;
+      limit = 5;
+      offset = (page - 1) * limit;
+    }
+
     try {
-      const user = await User.findAll({}, { transaction });
+      const user = await User.findAndCountAll({ limit, offset }, { transaction });
 
       await transaction.commit();
 
-      return res.status(200).json({ data: user });
+      const pageinfo = {
+        totalItems: user.count,
+        totalPages: Math.ceil(user.count / limit),
+        currentPage: page,
+        maxItemPerPage: limit,
+      };
+
+      return res.status(200).json({ data: user.rows, pageinfo });
     } catch (error) {
       return res.status(500).json({ message: "failed to retrieve user." });
     }

@@ -58,10 +58,27 @@ class MaintenanceTypeController {
         return res.status(403).json({ message: "forbidden action." });
       }
 
-      const maintenanceType = await Maintenance_Type.findAll({});
+      // pagination
+      let page = null;
+      let limit = null;
+      let offset = null;
+      if (req.query.page) {
+        page = req.query.page;
+        limit = 5;
+        offset = (page - 1) * limit;
+      }
+
+      const maintenanceType = await Maintenance_Type.findAndCountAll({ limit, offset });
+
+      const pageinfo = {
+        totalItems: maintenanceType.count,
+        totalPages: Math.ceil(maintenanceType.count / limit),
+        currentPage: page,
+        maxItemPerPage: limit,
+      };
 
       req.logger.info(`maintenance types retrieved by ${authinfo.name}`);
-      return res.status(200).json({ data: maintenanceType });
+      return res.status(200).json({ data: maintenanceType.rows, pageinfo });
     } catch (error) {
       req.logger.error(`fail to retrieve maintenance types by ${authinfo.name}`);
       return res.status(500).json({ message: "failed to retrieve maintenance types." });

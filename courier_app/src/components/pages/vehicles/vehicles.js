@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
 import swal from "sweetalert";
+import Pagination from "../../common/pagination/pagination";
 
 const Vehicle = () => {
     const navigate = useNavigate();
@@ -16,6 +17,10 @@ const Vehicle = () => {
     const [vehicleId, setVehicleId] = useState(0);
     const [updateId, setUpdateId] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [maxPerPage, setMaxPerPage] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
 
     const getCurrentDatetime = () => {
         const now = new Date();
@@ -52,25 +57,29 @@ const Vehicle = () => {
         };
 
         checkAuth();
-        getDriverVehicle();
+        getDriverVehicle(currentPage);
 
         if (role === "ADMIN") {
             getDrivers();
             getVehicles();
         }
-    }, [navigate, role]);
+    }, [navigate, role, currentPage]);
 
-    const getDriverVehicle = async () => {
+    const getDriverVehicle = async (page) => {
         const token = localStorage.getItem("authToken");
 
         try {
             await api
-                .get("/vehicle", {
+                .get(`/vehicle?page=${page}`, {
                     headers: {
                         Authorization: "Bearer " + token,
                     },
                 })
                 .then((res) => {
+                    setCurrentPage(Number(res.data.pageinfo.currentPage));
+                    setTotalPages(res.data.pageinfo.totalPages);
+                    setMaxPerPage(res.data.pageinfo.maxItemPerPage);
+                    setTotalItems(res.data.pageinfo.totalItems);
                     setDriverVehicles(res.data.data);
                 })
                 .catch((error) => {
@@ -149,7 +158,7 @@ const Vehicle = () => {
                     createDefaultMaintenance(createdId, 2);
                     createDefaultMaintenance(createdId, 3);
 
-                    getDriverVehicle();
+                    getDriverVehicle(currentPage);
                     clearState();
                     swal("Success", res.data.message, "success");
                 })
@@ -195,7 +204,7 @@ const Vehicle = () => {
             })
             .then((res) => {
                 swal("Success", res.data.message, "success");
-                getDriverVehicle();
+                getDriverVehicle(currentPage);
                 clearState();
             })
             .catch((error) => {
@@ -224,8 +233,8 @@ const Vehicle = () => {
                     })
                     .then((res) => {
                         swal("Success", `Successfully deleted number ${index}`, "success");
-                        getDriverVehicle();
                         clearState();
+                        getDriverVehicle(1);
                     })
                     .catch((error) => {
                         swal("Error", error.response.data.message, "error");
@@ -271,6 +280,12 @@ const Vehicle = () => {
         setIsOpen(false);
     };
 
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
     return (
         <div className="content">
             <div id="vehicle-type-list">
@@ -291,7 +306,7 @@ const Vehicle = () => {
                     <tbody>
                         {driverVehicles.map((driverVehicle, index) => (
                             <tr key={driverVehicle.id}>
-                                <th scope="row">{index + 1}</th>
+                                <th scope="row">{(currentPage - 1) * maxPerPage + index + 1}</th>
                                 <td>{driverVehicle.user.name}</td>
                                 <td>{driverVehicle.user.client}</td>
                                 <td>{driverVehicle.registry}</td>
@@ -309,7 +324,7 @@ const Vehicle = () => {
                                             <button
                                                 className="btn btn-danger"
                                                 value={driverVehicle.id}
-                                                data-id={index + 1}
+                                                data-id={(currentPage - 1) * maxPerPage + index + 1}
                                                 onClick={deleteDriverVehicle}
                                             >
                                                 Del
@@ -328,6 +343,10 @@ const Vehicle = () => {
                         ))}
                     </tbody>
                 </table>
+
+                {totalItems > maxPerPage && (
+                    <Pagination currentPage={currentPage} totalPages={totalPages} handlePageChange={handlePageChange} />
+                )}
             </div>
 
             <hr />

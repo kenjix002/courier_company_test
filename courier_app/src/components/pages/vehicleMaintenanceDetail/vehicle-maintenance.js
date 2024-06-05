@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../../services/api";
 import swal from "sweetalert";
+import Pagination from "../../common/pagination/pagination";
 
 const VehicleMaintenance = () => {
     const navigate = useNavigate();
@@ -15,6 +16,10 @@ const VehicleMaintenance = () => {
     const [maintenanceId, setMaintenanceId] = useState(0);
     const [updateId, setUpdateId] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [maxPerPage, setMaxPerPage] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -40,12 +45,12 @@ const VehicleMaintenance = () => {
         };
 
         checkAuth();
-        getVehicleMaintenance(vehicle_id);
+        getVehicleMaintenance(vehicle_id, currentPage);
 
         if (role === "ADMIN") {
             getMaintenanceType();
         }
-    }, [navigate, role, vehicle_id]);
+    }, [navigate, role, vehicle_id, currentPage]);
 
     const getMaintenanceType = async () => {
         const token = localStorage.getItem("authToken");
@@ -68,17 +73,21 @@ const VehicleMaintenance = () => {
         }
     };
 
-    const getVehicleMaintenance = async (vehicle_id) => {
+    const getVehicleMaintenance = async (vehicle_id, page) => {
         const token = localStorage.getItem("authToken");
 
         try {
             await api
-                .get(`/vehicle-maintenance/${vehicle_id}`, {
+                .get(`/vehicle-maintenance/${vehicle_id}/?page=${page}`, {
                     headers: {
                         Authorization: "Bearer " + token,
                     },
                 })
                 .then((res) => {
+                    setCurrentPage(Number(res.data.pageinfo.currentPage));
+                    setTotalPages(res.data.pageinfo.totalPages);
+                    setMaxPerPage(res.data.pageinfo.maxItemPerPage);
+                    setTotalItems(res.data.pageinfo.totalItems);
                     setMaintenanceDetails(res.data.data);
                 })
                 .catch((error) => {
@@ -106,7 +115,7 @@ const VehicleMaintenance = () => {
                     },
                 })
                 .then((res) => {
-                    getVehicleMaintenance(vehicle_id);
+                    getVehicleMaintenance(vehicle_id, currentPage);
                     clearState();
                     swal("Success", res.data.message, "success");
                 })
@@ -135,7 +144,7 @@ const VehicleMaintenance = () => {
             })
             .then((res) => {
                 swal("Success", res.data.message, "success");
-                getVehicleMaintenance(vehicle_id);
+                getVehicleMaintenance(vehicle_id, currentPage);
                 clearState();
             })
             .catch((error) => {
@@ -169,7 +178,7 @@ const VehicleMaintenance = () => {
                     })
                     .then((res) => {
                         swal("Success", `Successfully completed number ${index}`, "success");
-                        getVehicleMaintenance(vehicle_id);
+                        getVehicleMaintenance(vehicle_id, currentPage);
                         clearState();
                     })
                     .catch((error) => {
@@ -200,8 +209,8 @@ const VehicleMaintenance = () => {
                     })
                     .then((res) => {
                         swal("Success", `Successfully deleted number ${index}`, "success");
-                        getVehicleMaintenance(vehicle_id);
                         clearState();
+                        getVehicleMaintenance(vehicle_id, 1);
                     })
                     .catch((error) => {
                         swal("Error", error.response.data.message, "error");
@@ -229,6 +238,12 @@ const VehicleMaintenance = () => {
         setIsOpen(false);
     };
 
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
     return (
         <div className="content">
             <div id="vehicle-maintenance-list">
@@ -245,7 +260,7 @@ const VehicleMaintenance = () => {
                     <tbody>
                         {maintenanceDetails.map((detail, index) => (
                             <tr key={detail.id}>
-                                <th scope="row">{index + 1}</th>
+                                <th scope="row">{(currentPage - 1) * maxPerPage + index + 1}</th>
                                 <td>{detail.maintenance.type}</td>
                                 <td>{detail.due_schedule}</td>
                                 {role === "ADMIN" && (
@@ -253,7 +268,7 @@ const VehicleMaintenance = () => {
                                         <button
                                             className="btn btn-success"
                                             value={detail.id}
-                                            data-id={index + 1}
+                                            data-id={(currentPage - 1) * maxPerPage + index + 1}
                                             data-maintenance-id={detail.maintenance.id}
                                             onClick={completeVehicleMaintenance}
                                         >
@@ -270,7 +285,7 @@ const VehicleMaintenance = () => {
                                         <button
                                             className="btn btn-danger"
                                             value={detail.id}
-                                            data-id={index + 1}
+                                            data-id={(currentPage - 1) * maxPerPage + index + 1}
                                             onClick={deleteMaintenanceDetail}
                                         >
                                             Del
@@ -281,6 +296,10 @@ const VehicleMaintenance = () => {
                         ))}
                     </tbody>
                 </table>
+
+                {totalItems > maxPerPage && (
+                    <Pagination currentPage={currentPage} totalPages={totalPages} handlePageChange={handlePageChange} />
+                )}
             </div>
 
             <hr />
