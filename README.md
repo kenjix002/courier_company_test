@@ -25,7 +25,7 @@ Registered Vehicle
 - register new vehicle-driver
 - status check for maintenance detail for specific vehicle
 
-Vehicle Maintenance
+Vehicle Maintenance ( within registered vehicle page )
 
 - List of maintenance schedule for specific vehicle
 - only ADMIN can modify the maintenance items
