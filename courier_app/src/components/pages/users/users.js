@@ -210,7 +210,7 @@ const User = () => {
                     <form onSubmit={createUser} id="user-create-form" className="mt-3">
                         <div>
                             <div className="row">
-                                <div className="form-group col-5">
+                                <div className="form-group col-md-5">
                                     <label htmlFor="username">Username</label>
                                     <input
                                         type="text"
@@ -222,7 +222,7 @@ const User = () => {
                                         }}
                                     />
                                 </div>
-                                <div className="form-group col-5">
+                                <div className="form-group col-md-5">
                                     <label htmlFor="password">Password</label>
                                     <input
                                         type="password"
@@ -236,7 +236,7 @@ const User = () => {
                                 </div>
                             </div>
                             <div className="row mt-2">
-                                <div className="form-group col-5">
+                                <div className="form-group col-md-5">
                                     <label htmlFor="name">Name</label>
                                     <input
                                         type="text"
@@ -248,7 +248,7 @@ const User = () => {
                                         }}
                                     />
                                 </div>
-                                <div className="form-group col-5">
+                                <div className="form-group col-md-5">
                                     <label htmlFor="email">Email</label>
                                     <input
                                         type="email"
@@ -262,7 +262,7 @@ const User = () => {
                                 </div>
                             </div>
                             <div className="row mt-2">
-                                <div className="form-group col-5">
+                                <div className="form-group col-md-5">
                                     <label htmlFor="client">Client</label>
                                     <input
                                         type="text"
@@ -274,7 +274,7 @@ const User = () => {
                                         }}
                                     />
                                 </div>
-                                <div className="form-group col-5">
+                                <div className="form-group col-md-5">
                                     <label htmlFor="role">Role</label>
                                     <select
                                         className="form-control"

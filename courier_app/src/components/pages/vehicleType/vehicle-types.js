@@ -268,7 +268,7 @@ const VehicleType = () => {
                                     <td>{vehicle.availability ? "Yes" : "No"}</td>
                                     <td className="button-group">
                                         <button className="btn btn-info" value={vehicle.id} onClick={setEdit}>
-                                            <i class="bi bi-pencil icons-prevent" />
+                                            <i className="bi bi-pencil icons-prevent" />
                                         </button>
                                         <button
                                             className="btn btn-danger"
@@ -276,7 +276,7 @@ const VehicleType = () => {
                                             data-id={(currentPage - 1) * maxPerPage + index + 1}
                                             onClick={deleteVehicleType}
                                         >
-                                            <i class="bi bi-trash icons-prevent" />
+                                            <i className="bi bi-trash icons-prevent" />
                                         </button>
                                     </td>
                                 </tr>
@@ -300,7 +300,7 @@ const VehicleType = () => {
                     <form onSubmit={isCreate ? createVehicleType : editVehicleType} id="vehicle-type-create-form">
                         <div>
                             <div className="row">
-                                <div className="form-group col-5">
+                                <div className="form-group col-md-5">
                                     <label htmlFor="brand">Brand</label>
                                     <input
                                         type="text"
@@ -312,7 +312,7 @@ const VehicleType = () => {
                                         }}
                                     />
                                 </div>
-                                <div className="form-group col-5">
+                                <div className="form-group col-md-5">
                                     <label htmlFor="model">Model</label>
                                     <input
                                         type="text"
@@ -326,7 +326,7 @@ const VehicleType = () => {
                                 </div>
                             </div>
                             <div className="row mt-2">
-                                <div className="form-group col-5">
+                                <div className="form-group col-md-5">
                                     <label htmlFor="type">Type</label>
                                     <input
                                         type="text"
@@ -339,7 +339,7 @@ const VehicleType = () => {
                                     />
                                 </div>
                                 {!isCreate && (
-                                    <div className="form-group col-5">
+                                    <div className="form-group col-md-5">
                                         <label htmlFor="role">Availability</label>
                                         <select
                                             className="form-control"

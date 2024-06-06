@@ -261,7 +261,7 @@ const MaintenanceType = () => {
                                     <td>{maintenance.periodic_maintenance_month}</td>
                                     <td className="button-group">
                                         <button className="btn btn-info" value={maintenance.id} onClick={setEdit}>
-                                            <i class="bi bi-pencil icons-prevent" />
+                                            <i className="bi bi-pencil icons-prevent" />
                                         </button>
                                         <button
                                             className="btn btn-danger"
@@ -269,7 +269,7 @@ const MaintenanceType = () => {
                                             data-id={(currentPage - 1) * maxPerPage + index + 1}
                                             onClick={deleteMaintenanceType}
                                         >
-                                            <i class="bi bi-trash icons-prevent" />
+                                            <i className="bi bi-trash icons-prevent" />
                                         </button>
                                     </td>
                                 </tr>
@@ -295,7 +295,7 @@ const MaintenanceType = () => {
                     >
                         <div>
                             <div className="row">
-                                <div className="form-group col-5">
+                                <div className="form-group col-md-5">
                                     <label htmlFor="type">Type</label>
                                     <input
                                         type="text"
@@ -307,7 +307,7 @@ const MaintenanceType = () => {
                                         }}
                                     />
                                 </div>
-                                <div className="form-group col-5">
+                                <div className="form-group col-md-5">
                                     <label htmlFor="priority">Priority</label>
                                     <select
                                         className="form-control"
@@ -324,7 +324,7 @@ const MaintenanceType = () => {
                                 </div>
                             </div>
                             <div className="row mt-2">
-                                <div className="form-group col-5">
+                                <div className="form-group col-md-5">
                                     <label htmlFor="periodic_maintenance_month">Periodic Maintenance Month</label>
                                     <input
                                         type="number"

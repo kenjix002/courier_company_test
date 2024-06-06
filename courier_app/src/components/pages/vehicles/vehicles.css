@@ -35,19 +35,18 @@
 .vehicle-list .table {
     white-space: nowrap;
     overflow-x: auto;
-    max-width: 100px !important;
 }
 
 .vehicle-list .table thead tr th {
-    background: rgb(252, 85, 85);
+    background: rgb(182, 199, 31);
 }
 
 .vehicle-list .table tbody tr:nth-child(odd) td {
-    background: rgb(255, 180, 180);
+    background: rgb(242, 247, 205);
 }
 
 .vehicle-list .table tbody tr:nth-child(even) td {
-    background: rgb(247, 120, 120);
+    background: rgb(224, 235, 124);
 }
 
 .vehicle-list .table tbody tr:hover td {

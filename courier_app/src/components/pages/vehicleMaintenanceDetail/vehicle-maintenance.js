@@ -309,7 +309,7 @@ const VehicleMaintenance = () => {
                                                 data-maintenance-id={detail.maintenance.id}
                                                 onClick={completeVehicleMaintenance}
                                             >
-                                                <i class="bi bi-check icons-prevent" />
+                                                <i className="bi bi-check icons-prevent" />
                                             </button>
                                             <button
                                                 className="btn btn-info"
@@ -317,7 +317,7 @@ const VehicleMaintenance = () => {
                                                 value={detail.id}
                                                 onClick={setEdit}
                                             >
-                                                <i class="bi bi-pencil icons-prevent" />
+                                                <i className="bi bi-pencil icons-prevent" />
                                             </button>
                                             <button
                                                 className="btn btn-danger"
@@ -325,7 +325,7 @@ const VehicleMaintenance = () => {
                                                 data-id={(currentPage - 1) * maxPerPage + index + 1}
                                                 onClick={deleteMaintenanceDetail}
                                             >
-                                                <i class="bi bi-trash icons-prevent" />
+                                                <i className="bi bi-trash icons-prevent" />
                                             </button>
                                         </td>
                                     )}

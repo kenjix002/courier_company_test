@@ -360,7 +360,7 @@ const Vehicle = () => {
                                                     value={driverVehicle.id}
                                                     onClick={setEdit}
                                                 >
-                                                    <i class="bi bi-pencil icons-prevent" />
+                                                    <i className="bi bi-pencil icons-prevent" />
                                                 </button>
                                                 <button
                                                     className="btn btn-danger"
@@ -368,7 +368,7 @@ const Vehicle = () => {
                                                     data-id={(currentPage - 1) * maxPerPage + index + 1}
                                                     onClick={deleteDriverVehicle}
                                                 >
-                                                    <i class="bi bi-trash icons-prevent" />
+                                                    <i className="bi bi-trash icons-prevent" />
                                                 </button>
                                             </span>
                                         )}
@@ -377,7 +377,7 @@ const Vehicle = () => {
                                             onClick={toMaintenance}
                                             value={driverVehicle.id}
                                         >
-                                            <i class="bi bi-list-check icons-prevent" />
+                                            <i className="bi bi-list-check icons-prevent" />
                                         </button>
                                     </td>
                                 </tr>
@@ -404,7 +404,7 @@ const Vehicle = () => {
                             id="driver-vehicle-create-form"
                         >
                             <div className="row">
-                                <div className="form-group col-5">
+                                <div className="form-group col-md-5">
                                     <label htmlFor="registry">Registry</label>
                                     <input
                                         type="text"
@@ -418,7 +418,7 @@ const Vehicle = () => {
                                 </div>
                             </div>
                             <div className="row mt-2">
-                                <div className="form-group col-5">
+                                <div className="form-group col-md-5">
                                     <label htmlFor="role">Driver</label>
                                     <select
                                         className="form-control"
@@ -436,7 +436,7 @@ const Vehicle = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <div className="form-group col-5">
+                                <div className="form-group col-md-5">
                                     <label htmlFor="vehicle">Vehicle</label>
                                     <select
                                         className="form-control"
