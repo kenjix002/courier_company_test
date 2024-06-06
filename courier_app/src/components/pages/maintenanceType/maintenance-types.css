@@ -33,15 +33,15 @@
 }
 
 .maintenance-type-list .table thead tr th {
-    background: rgb(231, 147, 37);
+    background: #f7c437;
 }
 
 .maintenance-type-list .table tbody tr:nth-child(odd) td {
-    background: rgb(243, 202, 149);
+    background: #f7e7bc;
 }
 
 .maintenance-type-list .table tbody tr:nth-child(even) td {
-    background: rgb(255, 185, 93);
+    background: #f8d77b;
 }
 
 .maintenance-type-list .table tbody tr:hover td {

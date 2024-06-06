@@ -33,15 +33,15 @@
 }
 
 .vehicle-type-list .table thead tr th {
-    background: rgb(23, 204, 47);
+    background: #f7c437;
 }
 
 .vehicle-type-list .table tbody tr:nth-child(odd) td {
-    background: rgb(159, 250, 171);
+    background: #f7e7bc;
 }
 
 .vehicle-type-list .table tbody tr:nth-child(even) td {
-    background: rgb(97, 230, 115);
+    background: #f8d77b;
 }
 
 .vehicle-type-list .table tbody tr:hover td {

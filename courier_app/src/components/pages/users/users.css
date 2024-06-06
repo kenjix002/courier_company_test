@@ -33,15 +33,15 @@
 }
 
 .user-list .table thead tr th {
-    background: rgb(73, 150, 212);
+    background: #f7c437;
 }
 
 .user-list .table tbody tr:nth-child(odd) td {
-    background: rgb(140, 191, 233);
+    background: #f7e7bc;
 }
 
 .user-list .table tbody tr:nth-child(even) td {
-    background: rgb(202, 218, 232);
+    background: #f8d77b;
 }
 
 .user-list .table tbody tr:hover td {

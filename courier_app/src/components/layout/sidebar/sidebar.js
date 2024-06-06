@@ -33,8 +33,9 @@ const Sidebar = () => {
                 <Link to="/" className="nav-brand">
                     <img src={BrandLogo} alt="Placeholder" className="sidebar-image" width="100" />
                 </Link>
+                <hr />
                 <div className="burger-div" onClick={toggleNavList}>
-                    <i className="bi bi-list"></i>
+                    {showNavList ? <i className="bi bi-x" /> : <i className="bi bi-list" />}
                 </div>
                 {showNavList && (
                     <div className="nav-list">
@@ -56,6 +57,7 @@ const Sidebar = () => {
                                 </Link>
                             </div>
                         )}
+                        <hr />
                         <Link onClick={handleLogout} to="" className="nav-link">
                             Logout
                         </Link>

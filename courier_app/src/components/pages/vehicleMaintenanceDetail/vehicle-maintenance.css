@@ -38,15 +38,15 @@
 }
 
 .vehicle-maintenance-list .table thead tr th {
-    background: rgb(34, 212, 183);
+    background: #f7c437;
 }
 
 .vehicle-maintenance-list .table tbody tr:nth-child(odd) td {
-    background: rgb(158, 247, 232);
+    background: #f7e7bc;
 }
 
 .vehicle-maintenance-list .table tbody tr:nth-child(even) td {
-    background: rgb(99, 233, 211);
+    background: #f8d77b;
 }
 
 .vehicle-maintenance-list .table tbody tr:hover td {
