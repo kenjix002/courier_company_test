@@ -41,7 +41,9 @@ const Sidebar = () => {
                     <div className="nav-list">
                         {role === "ADMIN" && (
                             <div>
-                                <Link to="/users">Users</Link>
+                                <Link to="/users" className="nav-link">
+                                    Users
+                                </Link>
                             </div>
                         )}
                         <Link to="/vehicles" className="nav-link">
