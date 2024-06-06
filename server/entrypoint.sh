@@ -1,7 +1,6 @@
 #!/bin/sh
 
 # Wait for database to be ready
-sleep 20
 
 FLAG_FILE=".migrated_and_seeded"
 
