@@ -1,0 +1,55 @@
+.maintenance-type-content {
+    margin-top: 20px;
+    max-height: 90vh;
+}
+
+/* Sort */
+.maintenance-type-sorting.row {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.maintenance-type-sorting .form-group {
+    display: flex;
+}
+
+.maintenance-type-sorting label {
+    margin-right: 5%;
+    display: flex;
+    align-items: center;
+}
+
+/* Table list */
+.maintenance-type-list .table {
+    margin-top: 2%;
+    max-height: 30vh;
+    text-align: center;
+}
+
+.maintenance-type-list .maintenance-type-table {
+    height: 38vh;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.maintenance-type-list .table thead tr th {
+    background: rgb(231, 147, 37);
+}
+
+.maintenance-type-list .table tbody tr:nth-child(odd) td {
+    background: rgb(243, 202, 149);
+}
+
+.maintenance-type-list .table tbody tr:nth-child(even) td {
+    background: rgb(255, 185, 93);
+}
+
+.maintenance-type-list .table tbody tr:hover td {
+    background: rgb(255, 255, 255);
+}
+
+/* Pagination */
+.maintenance-type-list nav {
+    display: flex;
+    justify-content: flex-end;
+}

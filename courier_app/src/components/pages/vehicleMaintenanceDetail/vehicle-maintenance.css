@@ -1,0 +1,60 @@
+.vehicle-maintenance-content {
+    margin-top: 20px;
+    max-height: 90vh;
+}
+
+/* Sort */
+.vehicle-maintenance-sorting.row {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.vehicle-maintenance-sorting .form-group {
+    display: flex;
+}
+
+.vehicle-maintenance-sorting label {
+    margin-right: 5%;
+    display: flex;
+    align-items: center;
+}
+
+/* Table list */
+.vehicle-maintenance-list .table {
+    margin-top: 2%;
+    max-height: 30vh;
+    text-align: center;
+}
+
+.vehicle-maintenance-list .vehicle-maintenance-table {
+    height: 38vh;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.vehicle-maintenance-list .table {
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
+.vehicle-maintenance-list .table thead tr th {
+    background: rgb(34, 212, 183);
+}
+
+.vehicle-maintenance-list .table tbody tr:nth-child(odd) td {
+    background: rgb(158, 247, 232);
+}
+
+.vehicle-maintenance-list .table tbody tr:nth-child(even) td {
+    background: rgb(99, 233, 211);
+}
+
+.vehicle-maintenance-list .table tbody tr:hover td {
+    background: rgb(255, 255, 255);
+}
+
+/* Pagination */
+.vehicle-maintenance-list nav {
+    display: flex;
+    justify-content: flex-end;
+}

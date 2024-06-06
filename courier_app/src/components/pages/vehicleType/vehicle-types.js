@@ -222,10 +222,10 @@ const VehicleType = () => {
     };
 
     return (
-        <div className="content">
-            <div id="vehicle-type-list">
+        <div className="content vehicle-type-content">
+            <div className="vehicle-type-list">
                 <h1>Vehicle Type List</h1>
-                <div className="sorting row">
+                <div className="vehicle-type-sorting row">
                     <div className="col-sm-6">
                         <div className="form-group">
                             <label htmlFor="user-sort">Sort</label>
@@ -246,42 +246,44 @@ const VehicleType = () => {
                     </div>
                 </div>
 
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Brand</th>
-                            <th scope="col">Model</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Available</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {vehicleTypes.map((vehicle, index) => (
-                            <tr key={vehicle.id}>
-                                <th scope="row">{(currentPage - 1) * maxPerPage + index + 1}</th>
-                                <td>{vehicle.brand}</td>
-                                <td>{vehicle.model}</td>
-                                <td>{vehicle.type}</td>
-                                <td>{vehicle.availability ? "Yes" : "No"}</td>
-                                <td>
-                                    <button className="btn btn-info" value={vehicle.id} onClick={setEdit}>
-                                        Edit
-                                    </button>
-                                    <button
-                                        className="btn btn-danger"
-                                        value={vehicle.id}
-                                        data-id={(currentPage - 1) * maxPerPage + index + 1}
-                                        onClick={deleteVehicleType}
-                                    >
-                                        Del
-                                    </button>
-                                </td>
+                <div className="vehicle-type-table">
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Brand</th>
+                                <th scope="col">Model</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Available</th>
+                                <th scope="col">Action</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {vehicleTypes.map((vehicle, index) => (
+                                <tr key={vehicle.id}>
+                                    <th scope="row">{(currentPage - 1) * maxPerPage + index + 1}</th>
+                                    <td>{vehicle.brand}</td>
+                                    <td>{vehicle.model}</td>
+                                    <td>{vehicle.type}</td>
+                                    <td>{vehicle.availability ? "Yes" : "No"}</td>
+                                    <td className="button-group">
+                                        <button className="btn btn-info" value={vehicle.id} onClick={setEdit}>
+                                            <i class="bi bi-pencil icons-prevent" />
+                                        </button>
+                                        <button
+                                            className="btn btn-danger"
+                                            value={vehicle.id}
+                                            data-id={(currentPage - 1) * maxPerPage + index + 1}
+                                            onClick={deleteVehicleType}
+                                        >
+                                            <i class="bi bi-trash icons-prevent" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
 
                 {totalItems > maxPerPage && (
                     <Pagination currentPage={currentPage} totalPages={totalPages} handlePageChange={handlePageChange} />
@@ -297,58 +299,62 @@ const VehicleType = () => {
                 {isOpen && (
                     <form onSubmit={isCreate ? createVehicleType : editVehicleType} id="vehicle-type-create-form">
                         <div>
-                            <div className="form-group">
-                                <label htmlFor="brand">Brand</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="brand"
-                                    value={brand}
-                                    onChange={(e) => {
-                                        setBrand(e.target.value);
-                                    }}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="model">Model</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="model"
-                                    value={model}
-                                    onChange={(e) => {
-                                        setModel(e.target.value);
-                                    }}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="type">Type</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="type"
-                                    value={type}
-                                    onChange={(e) => {
-                                        setType(e.target.value);
-                                    }}
-                                />
-                            </div>
-                            {!isCreate && (
-                                <div className="form-group">
-                                    <label htmlFor="role">Availability</label>
-                                    <select
+                            <div className="row">
+                                <div className="form-group col-5">
+                                    <label htmlFor="brand">Brand</label>
+                                    <input
+                                        type="text"
                                         className="form-control"
-                                        id="role"
-                                        value={availability}
+                                        id="brand"
+                                        value={brand}
                                         onChange={(e) => {
-                                            setAvailability(e.target.value);
+                                            setBrand(e.target.value);
                                         }}
-                                    >
-                                        <option value={true}>Yes</option>
-                                        <option value={false}>No</option>
-                                    </select>
+                                    />
                                 </div>
-                            )}
+                                <div className="form-group col-5">
+                                    <label htmlFor="model">Model</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="model"
+                                        value={model}
+                                        onChange={(e) => {
+                                            setModel(e.target.value);
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <div className="row mt-2">
+                                <div className="form-group col-5">
+                                    <label htmlFor="type">Type</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="type"
+                                        value={type}
+                                        onChange={(e) => {
+                                            setType(e.target.value);
+                                        }}
+                                    />
+                                </div>
+                                {!isCreate && (
+                                    <div className="form-group col-5">
+                                        <label htmlFor="role">Availability</label>
+                                        <select
+                                            className="form-control"
+                                            id="role"
+                                            value={availability}
+                                            onChange={(e) => {
+                                                setAvailability(e.target.value);
+                                            }}
+                                        >
+                                            <option value={true}>Yes</option>
+                                            <option value={false}>No</option>
+                                        </select>
+                                    </div>
+                                )}
+                            </div>
                             <button type="submit" className="btn btn-primary mt-3">
                                 {isCreate ? "Create" : "Update"}
                             </button>

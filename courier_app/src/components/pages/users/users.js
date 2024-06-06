@@ -148,10 +148,10 @@ const User = () => {
     };
 
     return (
-        <div className="content">
-            <div id="user-list">
-                <h1>User List</h1>
-                <div className="sorting row">
+        <div className="content user-content">
+            <div className="user-list">
+                <h1 className="user-list-title">Users</h1>
+                <div className="user-sorting row">
                     <div className="col-sm-6">
                         <div className="form-group">
                             <label htmlFor="user-sort">Sort</label>
@@ -172,26 +172,28 @@ const User = () => {
                     </div>
                 </div>
 
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Role</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map((user, index) => (
-                            <tr key={user.id}>
-                                <th scope="row">{(currentPage - 1) * maxPerPage + index + 1}</th>
-                                <td>{user.name}</td>
-                                <td>{user.email}</td>
-                                <td>{user.role}</td>
+                <div className="user-table">
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Role</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {users.map((user, index) => (
+                                <tr key={user.id}>
+                                    <th scope="row">{(currentPage - 1) * maxPerPage + index + 1}</th>
+                                    <td>{user.name}</td>
+                                    <td>{user.email}</td>
+                                    <td>{user.role}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
 
                 {totalItems > maxPerPage && (
                     <Pagination currentPage={currentPage} totalPages={totalPages} handlePageChange={handlePageChange} />
@@ -205,81 +207,87 @@ const User = () => {
                     Create User {isOpen ? "-" : "+"}
                 </h1>
                 {isOpen && (
-                    <form onSubmit={createUser} id="user-create-form">
+                    <form onSubmit={createUser} id="user-create-form" className="mt-3">
                         <div>
-                            <div className="form-group">
-                                <label htmlFor="username">Username</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="username"
-                                    value={username}
-                                    onChange={(e) => {
-                                        setUsername(e.target.value);
-                                    }}
-                                />
+                            <div className="row">
+                                <div className="form-group col-5">
+                                    <label htmlFor="username">Username</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="username"
+                                        value={username}
+                                        onChange={(e) => {
+                                            setUsername(e.target.value);
+                                        }}
+                                    />
+                                </div>
+                                <div className="form-group col-5">
+                                    <label htmlFor="password">Password</label>
+                                    <input
+                                        type="password"
+                                        className="form-control"
+                                        id="password"
+                                        value={password}
+                                        onChange={(e) => {
+                                            setPassword(e.target.value);
+                                        }}
+                                    />
+                                </div>
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="password">Password</label>
-                                <input
-                                    type="password"
-                                    className="form-control"
-                                    id="password"
-                                    value={password}
-                                    onChange={(e) => {
-                                        setPassword(e.target.value);
-                                    }}
-                                />
+                            <div className="row mt-2">
+                                <div className="form-group col-5">
+                                    <label htmlFor="name">Name</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="name"
+                                        value={name}
+                                        onChange={(e) => {
+                                            setName(e.target.value);
+                                        }}
+                                    />
+                                </div>
+                                <div className="form-group col-5">
+                                    <label htmlFor="email">Email</label>
+                                    <input
+                                        type="email"
+                                        className="form-control"
+                                        id="email"
+                                        value={email}
+                                        onChange={(e) => {
+                                            setEmail(e.target.value);
+                                        }}
+                                    />
+                                </div>
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="name">Name</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="name"
-                                    value={name}
-                                    onChange={(e) => {
-                                        setName(e.target.value);
-                                    }}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="email">Email</label>
-                                <input
-                                    type="email"
-                                    className="form-control"
-                                    id="email"
-                                    value={email}
-                                    onChange={(e) => {
-                                        setEmail(e.target.value);
-                                    }}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="client">Client</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="client"
-                                    value={client}
-                                    onChange={(e) => {
-                                        setClient(e.target.value);
-                                    }}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="role">Role</label>
-                                <select
-                                    className="form-control"
-                                    id="role"
-                                    value={role}
-                                    onChange={(e) => {
-                                        setRole(e.target.value);
-                                    }}
-                                >
-                                    <option value="ADMIN">ADMIN</option>
-                                    <option value="DRIVER">DRIVER</option>
-                                </select>
+                            <div className="row mt-2">
+                                <div className="form-group col-5">
+                                    <label htmlFor="client">Client</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="client"
+                                        value={client}
+                                        onChange={(e) => {
+                                            setClient(e.target.value);
+                                        }}
+                                    />
+                                </div>
+                                <div className="form-group col-5">
+                                    <label htmlFor="role">Role</label>
+                                    <select
+                                        className="form-control"
+                                        id="role"
+                                        value={role}
+                                        onChange={(e) => {
+                                            setRole(e.target.value);
+                                        }}
+                                    >
+                                        <option value="ADMIN">ADMIN</option>
+                                        <option value="DRIVER">DRIVER</option>
+                                    </select>
+                                </div>
                             </div>
                             <button type="submit" className="btn btn-primary mt-3">
                                 Submit

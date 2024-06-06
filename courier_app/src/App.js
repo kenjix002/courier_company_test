@@ -1,7 +1,6 @@
 import "./App.css";
 import React, { useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 import Navbar from "./components/layout/sidebar/sidebar";
 import Login from "./components/pages/login/login";

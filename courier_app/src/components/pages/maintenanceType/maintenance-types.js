@@ -217,10 +217,10 @@ const MaintenanceType = () => {
     };
 
     return (
-        <div className="content">
-            <div id="maintenance-type-list">
+        <div className="content maintenance-type-content">
+            <div className="maintenance-type-list">
                 <h1>Maintenance Type List</h1>
-                <div className="sorting row">
+                <div className="maintenance-type-sorting row">
                     <div className="col-sm-6">
                         <div className="form-group">
                             <label htmlFor="user-sort">Sort</label>
@@ -241,41 +241,42 @@ const MaintenanceType = () => {
                     </div>
                 </div>
 
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Priority</th>
-                            <th scope="col">Periodic Maintenance Month</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {maintenanceType.map((maintenance, index) => (
-                            <tr key={maintenance.id}>
-                                <th scope="row">{(currentPage - 1) * maxPerPage + index + 1}</th>
-                                <td>{maintenance.type}</td>
-                                <td>{maintenance.priority}</td>
-                                <td>{maintenance.periodic_maintenance_month}</td>
-                                <td>
-                                    <button className="btn btn-info" value={maintenance.id} onClick={setEdit}>
-                                        Edit
-                                    </button>
-                                    <button
-                                        className="btn btn-danger"
-                                        value={maintenance.id}
-                                        data-id={(currentPage - 1) * maxPerPage + index + 1}
-                                        onClick={deleteMaintenanceType}
-                                    >
-                                        Del
-                                    </button>
-                                </td>
+                <div className="maintenance-type-table">
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Priority</th>
+                                <th scope="col">Periodic Maintenance(Month)</th>
+                                <th scope="col">Action</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-
+                        </thead>
+                        <tbody>
+                            {maintenanceType.map((maintenance, index) => (
+                                <tr key={maintenance.id}>
+                                    <th scope="row">{(currentPage - 1) * maxPerPage + index + 1}</th>
+                                    <td>{maintenance.type}</td>
+                                    <td>{maintenance.priority}</td>
+                                    <td>{maintenance.periodic_maintenance_month}</td>
+                                    <td className="button-group">
+                                        <button className="btn btn-info" value={maintenance.id} onClick={setEdit}>
+                                            <i class="bi bi-pencil icons-prevent" />
+                                        </button>
+                                        <button
+                                            className="btn btn-danger"
+                                            value={maintenance.id}
+                                            data-id={(currentPage - 1) * maxPerPage + index + 1}
+                                            onClick={deleteMaintenanceType}
+                                        >
+                                            <i class="bi bi-trash icons-prevent" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
                 {totalItems > maxPerPage && (
                     <Pagination currentPage={currentPage} totalPages={totalPages} handlePageChange={handlePageChange} />
                 )}
@@ -293,44 +294,48 @@ const MaintenanceType = () => {
                         id="maintenance-type-create-form"
                     >
                         <div>
-                            <div className="form-group">
-                                <label htmlFor="type">Type</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="type"
-                                    value={type}
-                                    onChange={(e) => {
-                                        setType(e.target.value);
-                                    }}
-                                />
+                            <div className="row">
+                                <div className="form-group col-5">
+                                    <label htmlFor="type">Type</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="type"
+                                        value={type}
+                                        onChange={(e) => {
+                                            setType(e.target.value);
+                                        }}
+                                    />
+                                </div>
+                                <div className="form-group col-5">
+                                    <label htmlFor="priority">Priority</label>
+                                    <select
+                                        className="form-control"
+                                        id="priority"
+                                        value={priority}
+                                        onChange={(e) => {
+                                            setPriority(e.target.value);
+                                        }}
+                                    >
+                                        <option value="HIGH">HIGH</option>
+                                        <option value="MEDIUM">MEDIUM</option>
+                                        <option value="LOW">LOW</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="priority">Priority</label>
-                                <select
-                                    className="form-control"
-                                    id="priority"
-                                    value={priority}
-                                    onChange={(e) => {
-                                        setPriority(e.target.value);
-                                    }}
-                                >
-                                    <option value="HIGH">HIGH</option>
-                                    <option value="MEDIUM">MEDIUM</option>
-                                    <option value="LOW">LOW</option>
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="periodic_maintenance_month">Periodic Maintenance Month</label>
-                                <input
-                                    type="number"
-                                    className="form-control"
-                                    id="periodic_maintenance_month"
-                                    value={periodicMaintenanceMonth}
-                                    onChange={(e) => {
-                                        setPeriodicMaintenanceMonth(e.target.value);
-                                    }}
-                                />
+                            <div className="row mt-2">
+                                <div className="form-group col-5">
+                                    <label htmlFor="periodic_maintenance_month">Periodic Maintenance Month</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        id="periodic_maintenance_month"
+                                        value={periodicMaintenanceMonth}
+                                        onChange={(e) => {
+                                            setPeriodicMaintenanceMonth(e.target.value);
+                                        }}
+                                    />
+                                </div>
                             </div>
                             <button type="submit" className="btn btn-primary mt-3">
                                 {isCreate ? "Create" : "Update"}

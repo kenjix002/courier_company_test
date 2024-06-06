@@ -260,10 +260,10 @@ const VehicleMaintenance = () => {
     };
 
     return (
-        <div className="content">
-            <div id="vehicle-maintenance-list">
+        <div className="content vehicle-maintenance-content">
+            <div className="vehicle-maintenance-list">
                 <h1>Vehicle Maintenance Detail List</h1>
-                <div className="sorting row">
+                <div className="vehicle-maintenance-sorting row">
                     <div className="col-sm-6">
                         <div className="form-group">
                             <label htmlFor="user-sort">Sort</label>
@@ -284,54 +284,56 @@ const VehicleMaintenance = () => {
                     </div>
                 </div>
 
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Maintenance Type</th>
-                            <th scope="col">Due Schedule</th>
-                            {role === "ADMIN" && <th scope="col">Action</th>}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {maintenanceDetails.map((detail, index) => (
-                            <tr key={detail.id}>
-                                <th scope="row">{(currentPage - 1) * maxPerPage + index + 1}</th>
-                                <td>{detail.maintenance.type}</td>
-                                <td>{detail.due_schedule}</td>
-                                {role === "ADMIN" && (
-                                    <td>
-                                        <button
-                                            className="btn btn-success"
-                                            value={detail.id}
-                                            data-id={(currentPage - 1) * maxPerPage + index + 1}
-                                            data-maintenance-id={detail.maintenance.id}
-                                            onClick={completeVehicleMaintenance}
-                                        >
-                                            Complete
-                                        </button>
-                                        <button
-                                            className="btn btn-info"
-                                            data-maintenance-id={detail.maintenance.id}
-                                            value={detail.id}
-                                            onClick={setEdit}
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            className="btn btn-danger"
-                                            value={detail.id}
-                                            data-id={(currentPage - 1) * maxPerPage + index + 1}
-                                            onClick={deleteMaintenanceDetail}
-                                        >
-                                            Del
-                                        </button>
-                                    </td>
-                                )}
+                <div className="vehicle-maintenance-table">
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Maintenance Type</th>
+                                <th scope="col">Due Schedule</th>
+                                {role === "ADMIN" && <th scope="col">Action</th>}
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {maintenanceDetails.map((detail, index) => (
+                                <tr key={detail.id}>
+                                    <th scope="row">{(currentPage - 1) * maxPerPage + index + 1}</th>
+                                    <td>{detail.maintenance.type}</td>
+                                    <td>{detail.due_schedule}</td>
+                                    {role === "ADMIN" && (
+                                        <td className="button-group">
+                                            <button
+                                                className="btn btn-success"
+                                                value={detail.id}
+                                                data-id={(currentPage - 1) * maxPerPage + index + 1}
+                                                data-maintenance-id={detail.maintenance.id}
+                                                onClick={completeVehicleMaintenance}
+                                            >
+                                                <i class="bi bi-check icons-prevent" />
+                                            </button>
+                                            <button
+                                                className="btn btn-info"
+                                                data-maintenance-id={detail.maintenance.id}
+                                                value={detail.id}
+                                                onClick={setEdit}
+                                            >
+                                                <i class="bi bi-pencil icons-prevent" />
+                                            </button>
+                                            <button
+                                                className="btn btn-danger"
+                                                value={detail.id}
+                                                data-id={(currentPage - 1) * maxPerPage + index + 1}
+                                                onClick={deleteMaintenanceDetail}
+                                            >
+                                                <i class="bi bi-trash icons-prevent" />
+                                            </button>
+                                        </td>
+                                    )}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
 
                 {totalItems > maxPerPage && (
                     <Pagination currentPage={currentPage} totalPages={totalPages} handlePageChange={handlePageChange} />
@@ -350,23 +352,25 @@ const VehicleMaintenance = () => {
                             onSubmit={isCreate ? createVehicleMaintenance : updateVehicleMaintenance}
                             id="driver-vehicle-create-form"
                         >
-                            <div className="form-group">
-                                <label htmlFor="role">Driver</label>
-                                <select
-                                    className="form-control"
-                                    id="role"
-                                    value={maintenanceId}
-                                    onChange={(e) => {
-                                        setMaintenanceId(e.target.value);
-                                    }}
-                                >
-                                    <option value={0}>None</option>
-                                    {maintenanceList.map((maintenance) => (
-                                        <option key={maintenance.id} value={maintenance.id}>
-                                            {maintenance.type}
-                                        </option>
-                                    ))}
-                                </select>
+                            <div className="row">
+                                <div className="form-group col-8">
+                                    <label htmlFor="role">Maintenance</label>
+                                    <select
+                                        className="form-control"
+                                        id="role"
+                                        value={maintenanceId}
+                                        onChange={(e) => {
+                                            setMaintenanceId(e.target.value);
+                                        }}
+                                    >
+                                        <option value={0}>None</option>
+                                        {maintenanceList.map((maintenance) => (
+                                            <option key={maintenance.id} value={maintenance.id}>
+                                                {maintenance.type}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
 
                             <button type="submit" className="btn btn-primary mt-3">

@@ -1,0 +1,55 @@
+.user-content {
+    margin-top: 20px;
+    max-height: 90vh;
+}
+
+/* Sort */
+.user-sorting.row {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.user-sorting .form-group {
+    display: flex;
+}
+
+.user-sorting label {
+    margin-right: 5%;
+    display: flex;
+    align-items: center;
+}
+
+/* Table list */
+.user-list .table {
+    margin-top: 2%;
+    max-height: 30vh;
+}
+
+.user-list .user-table {
+    height: 30vh;
+    text-align: center;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.user-list .table thead tr th {
+    background: rgb(73, 150, 212);
+}
+
+.user-list .table tbody tr:nth-child(odd) td {
+    background: rgb(140, 191, 233);
+}
+
+.user-list .table tbody tr:nth-child(even) td {
+    background: rgb(202, 218, 232);
+}
+
+.user-list .table tbody tr:hover td {
+    background: rgb(255, 255, 255);
+}
+
+/* Pagination */
+.user-list nav {
+    display: flex;
+    justify-content: flex-end;
+}

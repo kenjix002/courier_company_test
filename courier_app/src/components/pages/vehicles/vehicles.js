@@ -302,10 +302,10 @@ const Vehicle = () => {
     };
 
     return (
-        <div className="content">
-            <div id="vehicle-type-list">
-                <h1>Vehicle Type List</h1>
-                <div className="sorting row">
+        <div className="content vehicle-content">
+            <div className="vehicle-list">
+                <h1>Registered Vehicle List</h1>
+                <div className="vehicle-sorting row">
                     <div className="col-sm-6">
                         <div className="form-group">
                             <label htmlFor="user-sort">Sort</label>
@@ -326,59 +326,65 @@ const Vehicle = () => {
                     </div>
                 </div>
 
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Driver's Name</th>
-                            <th scope="col">Driver's Client</th>
-                            <th scope="col">Registry</th>
-                            <th scope="col">Vehicle Brand</th>
-                            <th scope="col">Vehicle Model</th>
-                            <th scope="col">Vehicle Type</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {driverVehicles.map((driverVehicle, index) => (
-                            <tr key={driverVehicle.id}>
-                                <th scope="row">{(currentPage - 1) * maxPerPage + index + 1}</th>
-                                <td>{driverVehicle.user.name}</td>
-                                <td>{driverVehicle.user.client}</td>
-                                <td>{driverVehicle.registry}</td>
-                                <td>{driverVehicle.vehicleType.brand}</td>
-                                <td>{driverVehicle.vehicleType.model}</td>
-                                <td>{driverVehicle.vehicleType.type}</td>
-
-                                <td>
-                                    {" "}
-                                    {role === "ADMIN" && (
-                                        <span>
-                                            <button className="btn btn-info" value={driverVehicle.id} onClick={setEdit}>
-                                                Edit
-                                            </button>
-                                            <button
-                                                className="btn btn-danger"
-                                                value={driverVehicle.id}
-                                                data-id={(currentPage - 1) * maxPerPage + index + 1}
-                                                onClick={deleteDriverVehicle}
-                                            >
-                                                Del
-                                            </button>
-                                        </span>
-                                    )}
-                                    <button
-                                        className="btn btn-success"
-                                        onClick={toMaintenance}
-                                        value={driverVehicle.id}
-                                    >
-                                        Status
-                                    </button>
-                                </td>
+                <div className="vehicle-table">
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Driver's Name</th>
+                                <th scope="col">Driver's Client</th>
+                                <th scope="col">Registry</th>
+                                <th scope="col">Vehicle Brand</th>
+                                <th scope="col">Vehicle Model</th>
+                                <th scope="col">Vehicle Type</th>
+                                <th scope="col">Action</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {driverVehicles.map((driverVehicle, index) => (
+                                <tr key={driverVehicle.id}>
+                                    <th scope="row">{(currentPage - 1) * maxPerPage + index + 1}</th>
+                                    <td>{driverVehicle.user.name}</td>
+                                    <td>{driverVehicle.user.client}</td>
+                                    <td>{driverVehicle.registry}</td>
+                                    <td>{driverVehicle.vehicleType.brand}</td>
+                                    <td>{driverVehicle.vehicleType.model}</td>
+                                    <td>{driverVehicle.vehicleType.type}</td>
+
+                                    <td className="button-group">
+                                        {" "}
+                                        {role === "ADMIN" && (
+                                            <span className="button-group">
+                                                <button
+                                                    className="btn btn-info"
+                                                    value={driverVehicle.id}
+                                                    onClick={setEdit}
+                                                >
+                                                    <i class="bi bi-pencil icons-prevent" />
+                                                </button>
+                                                <button
+                                                    className="btn btn-danger"
+                                                    value={driverVehicle.id}
+                                                    data-id={(currentPage - 1) * maxPerPage + index + 1}
+                                                    onClick={deleteDriverVehicle}
+                                                >
+                                                    <i class="bi bi-trash icons-prevent" />
+                                                </button>
+                                            </span>
+                                        )}
+                                        <button
+                                            className="btn btn-success"
+                                            onClick={toMaintenance}
+                                            value={driverVehicle.id}
+                                        >
+                                            <i class="bi bi-list-check icons-prevent" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
 
                 {totalItems > maxPerPage && (
                     <Pagination currentPage={currentPage} totalPages={totalPages} handlePageChange={handlePageChange} />
@@ -397,54 +403,58 @@ const Vehicle = () => {
                             onSubmit={isCreate ? createDriverVehicle : editDriverVehicle}
                             id="driver-vehicle-create-form"
                         >
-                            <div className="form-group">
-                                <label htmlFor="registry">Registry</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="registry"
-                                    value={registry}
-                                    onChange={(e) => {
-                                        setRegistry(e.target.value);
-                                    }}
-                                />
+                            <div className="row">
+                                <div className="form-group col-5">
+                                    <label htmlFor="registry">Registry</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="registry"
+                                        value={registry}
+                                        onChange={(e) => {
+                                            setRegistry(e.target.value);
+                                        }}
+                                    />
+                                </div>
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="role">Driver</label>
-                                <select
-                                    className="form-control"
-                                    id="role"
-                                    value={driverId}
-                                    onChange={(e) => {
-                                        setDriverId(e.target.value);
-                                    }}
-                                >
-                                    <option value={0}>None</option>
-                                    {driverList.map((driver) => (
-                                        <option key={driver.id} value={driver.id}>
-                                            {driver.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="vehicle">Vehicle</label>
-                                <select
-                                    className="form-control"
-                                    id="vehicle"
-                                    value={vehicleId}
-                                    onChange={(e) => {
-                                        setVehicleId(e.target.value);
-                                    }}
-                                >
-                                    <option value={0}>None</option>
-                                    {vehicleList.map((vehicle) => (
-                                        <option key={vehicle.id} value={vehicle.id}>
-                                            {vehicle.brand} | {vehicle.model} | {vehicle.type} |{" "}
-                                            {vehicle.availability ? "AVAILABLE" : "OUT"}
-                                        </option>
-                                    ))}
-                                </select>
+                            <div className="row mt-2">
+                                <div className="form-group col-5">
+                                    <label htmlFor="role">Driver</label>
+                                    <select
+                                        className="form-control"
+                                        id="role"
+                                        value={driverId}
+                                        onChange={(e) => {
+                                            setDriverId(e.target.value);
+                                        }}
+                                    >
+                                        <option value={0}>None</option>
+                                        {driverList.map((driver) => (
+                                            <option key={driver.id} value={driver.id}>
+                                                {driver.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="form-group col-5">
+                                    <label htmlFor="vehicle">Vehicle</label>
+                                    <select
+                                        className="form-control"
+                                        id="vehicle"
+                                        value={vehicleId}
+                                        onChange={(e) => {
+                                            setVehicleId(e.target.value);
+                                        }}
+                                    >
+                                        <option value={0}>None</option>
+                                        {vehicleList.map((vehicle) => (
+                                            <option key={vehicle.id} value={vehicle.id}>
+                                                {vehicle.brand} | {vehicle.model} | {vehicle.type} |{" "}
+                                                {vehicle.availability ? "AVAILABLE" : "OUT"}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
 
                             {!isCreate && (

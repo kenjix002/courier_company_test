@@ -1,0 +1,55 @@
+.vehicle-type-content {
+    margin-top: 20px;
+    max-height: 90vh;
+}
+
+/* Sort */
+.vehicle-type-sorting.row {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.vehicle-type-sorting .form-group {
+    display: flex;
+}
+
+.vehicle-type-sorting label {
+    margin-right: 5%;
+    display: flex;
+    align-items: center;
+}
+
+/* Table list */
+.vehicle-type-list .table {
+    margin-top: 2%;
+    max-height: 30vh;
+    text-align: center;
+}
+
+.vehicle-type-list .vehicle-type-table {
+    height: 38vh;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.vehicle-type-list .table thead tr th {
+    background: rgb(23, 204, 47);
+}
+
+.vehicle-type-list .table tbody tr:nth-child(odd) td {
+    background: rgb(159, 250, 171);
+}
+
+.vehicle-type-list .table tbody tr:nth-child(even) td {
+    background: rgb(97, 230, 115);
+}
+
+.vehicle-type-list .table tbody tr:hover td {
+    background: rgb(255, 255, 255);
+}
+
+/* Pagination */
+.vehicle-type-list nav {
+    display: flex;
+    justify-content: flex-end;
+}
