@@ -1,54 +1,66 @@
 import "./sidebar.css";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
+import BrandLogo from "../../../assets/images/deliverylogo.png";
 
 const Sidebar = () => {
     const navigate = useNavigate();
     const role = localStorage.getItem("userRole");
+    const [showNavList, setShowNavList] = useState(true);
+
+    useEffect(() => {
+        window.addEventListener("resize", () => {
+            if (window.innerWidth < 700) {
+                setShowNavList(false);
+            } else {
+                setShowNavList(true);
+            }
+        });
+    });
 
     const handleLogout = () => {
         localStorage.removeItem("authToken");
         navigate("/");
     };
 
+    const toggleNavList = () => {
+        setShowNavList(!showNavList);
+    };
+
     return (
         <>
             <nav className="sidebar">
                 <Link to="/" className="nav-brand">
-                    Courier
+                    <img src={BrandLogo} alt="Placeholder" className="sidebar-image" width="100" />
                 </Link>
-
-                <ul className="navbar-nav mr-auto">
-                    {role === "ADMIN" && (
-                        <li className="nav-item">
-                            <Link to="/users">Users</Link>
-                        </li>
-                    )}
-                    <li className="nav-item">
+                <div className="burger-div" onClick={toggleNavList}>
+                    <i className="bi bi-list"></i>
+                </div>
+                {showNavList && (
+                    <div className="nav-list">
+                        {role === "ADMIN" && (
+                            <div>
+                                <Link to="/users">Users</Link>
+                            </div>
+                        )}
                         <Link to="/vehicles" className="nav-link">
                             Registered Vehicles
                         </Link>
-                    </li>
-                    {role === "ADMIN" && (
-                        <li className="nav-item">
-                            <Link to="/vehicle-types" className="nav-link">
-                                Vehicle Types
-                            </Link>
-                        </li>
-                    )}
-                    {role === "ADMIN" && (
-                        <li className="nav-item">
-                            <Link to="/maintenance-types" className="nav-link">
-                                Maintenance Types
-                            </Link>
-                        </li>
-                    )}
-                    <li className="nav-item">
+                        {role === "ADMIN" && (
+                            <div>
+                                <Link to="/vehicle-types" className="nav-link">
+                                    Vehicle Types
+                                </Link>
+                                <Link to="/maintenance-types" className="nav-link">
+                                    Maintenance Types
+                                </Link>
+                            </div>
+                        )}
                         <Link onClick={handleLogout} to="" className="nav-link">
                             Logout
                         </Link>
-                    </li>
-                </ul>
+                    </div>
+                )}
             </nav>
             <Outlet />
         </>

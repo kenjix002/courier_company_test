@@ -172,7 +172,7 @@ const User = () => {
                     </div>
                 </div>
 
-                <div className="user-table">
+                <div className="user-table mt-2">
                     <table className="table">
                         <thead>
                             <tr>

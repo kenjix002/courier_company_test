@@ -241,7 +241,7 @@ const MaintenanceType = () => {
                     </div>
                 </div>
 
-                <div className="maintenance-type-table">
+                <div className="maintenance-type-table mt-2">
                     <table className="table">
                         <thead>
                             <tr>

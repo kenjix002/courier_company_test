@@ -246,7 +246,7 @@ const VehicleType = () => {
                     </div>
                 </div>
 
-                <div className="vehicle-type-table">
+                <div className="vehicle-type-table mt-2">
                     <table className="table">
                         <thead>
                             <tr>

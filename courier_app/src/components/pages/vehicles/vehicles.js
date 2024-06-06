@@ -326,7 +326,7 @@ const Vehicle = () => {
                     </div>
                 </div>
 
-                <div className="vehicle-table">
+                <div className="vehicle-table mt-2">
                     <table className="table">
                         <thead>
                             <tr>

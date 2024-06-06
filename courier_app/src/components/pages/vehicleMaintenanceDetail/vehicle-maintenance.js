@@ -284,7 +284,7 @@ const VehicleMaintenance = () => {
                     </div>
                 </div>
 
-                <div className="vehicle-maintenance-table">
+                <div className="vehicle-maintenance-table mt-2">
                     <table className="table">
                         <thead>
                             <tr>
