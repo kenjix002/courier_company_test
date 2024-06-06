@@ -50,6 +50,7 @@ Maintenance Type
 ### Prerequisites
 
 - docker 19.03.13 ++
+- port unused [ 3306, 8080, 8000 ]
 
 ### Start
 
@@ -59,6 +60,12 @@ Clone the application from github and run docker compose to start the applicatio
 git clone https://github.com/kenjix002/courier_company_test.git
 cd courier_company_test
 docker compose up -d
+```
+
+In browser just run the following url
+
+```
+localhost:8080
 ```
 
 ### Login credential
